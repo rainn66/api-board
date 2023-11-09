@@ -9,7 +9,11 @@
   },
   "dependencies": {
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "mutationobserver-shim": "^0.3.7",
+    "popper.js": "^1.16.1",
+    "portal-vue": "^2.1.7",
+    "vue": "^3.2.13",
+    "vue-resizable": "^2.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -20,6 +24,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "node-sass": "^9.0.0",
+    "sass": "^1.26.11",
     "sass-loader": "^13.3.2"
   },
   "eslintConfig": {

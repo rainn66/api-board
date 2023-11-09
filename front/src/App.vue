@@ -1,30 +1,35 @@
 <template>
-  <vueHeader></vueHeader>
-  
-  <vueFooter></vueFooter>
+    <SideBar class="side-bar"/>
 </template>
 
 <script>
-import vueHeader from './components/vueHeader.vue'
-import vueFooter from './components/vueFooter.vue'
+import SideBar from "@/components/SideBar";
+
 
 export default {
-  name: 'App',
-  components: {
-    vueHeader
-    , vueFooter
-  }
+    name: 'App',
+    components: {
+        SideBar
+    }
 }
 </script>
 
-<style>
+<style lang="scss">
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    position:absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    > .side-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
 }
 
 
