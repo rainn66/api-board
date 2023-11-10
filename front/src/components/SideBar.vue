@@ -5,9 +5,9 @@
 
             </div>
         </VueResizable>
-<!--        <button class="side-bar-active-btn" size="sm" @click="showSideBar">
+        <button class="side-bar-active-btn" @click="showSideBar">
             {{ isVisibleSideBar ? 'Close' : 'Open' }}
-        </button>-->
+        </button>
     </div>
 </template>
 

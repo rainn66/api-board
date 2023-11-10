@@ -1,28 +1,36 @@
 <template>
+    <AppHeader></AppHeader>
     <SideBar class="side-bar"/>
+    <router-view/>
+    <AppFooter></AppFooter>
 </template>
 
 <script>
 import SideBar from "@/components/SideBar";
+import AppHeader from "@/components/AppHeader";
+import AppFooter from "@/components/AppFooter";
 
 
 export default {
     name: 'App',
     components: {
-        SideBar
+        SideBar,
+        AppHeader,
+        AppFooter
     }
 }
 </script>
 
 <style lang="scss">
 
+
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
-    position:absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-left:200px;
 
     > .side-bar {
         position: absolute;
