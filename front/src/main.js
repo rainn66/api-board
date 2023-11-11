@@ -1,3 +1,5 @@
+import './assets/common.css'
+
 import { createApp } from 'vue'
 import 'mutationobserver-shim'
 import App from './App.vue'
