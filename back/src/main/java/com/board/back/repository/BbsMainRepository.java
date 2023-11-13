@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BbsMainRepository extends JpaRepository<BbsMainEntity, Long> {
     List<BbsMainEntity> findByBbsCategoryCd(String bbsCategoryCd);
+
+    BbsMainEntity findByBbsIdx(Long bbsIdx);
 }

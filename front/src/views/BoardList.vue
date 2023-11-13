@@ -1,7 +1,7 @@
 <template>
     <div class="board-list">
         <div class="common-buttons">
-            <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnWrite">등록</button>
+            <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnGoForm('')">등록</button>
         </div>
         <table class="w3-table-all">
             <thead>
@@ -15,7 +15,7 @@
             <tbody>
             <tr v-for="(row, idx) in list" :key="idx">
                 <td>{{ row.bbsIdx }}</td>
-                <td><a v-on:click="fnView(`${row.bbsIdx}`)">{{ row.bbsTitle }}</a></td>
+                <td><a v-on:click="fnGoForm(`${row.bbsIdx}`)">{{ row.bbsTitle }}</a></td>
                 <td>{{ row.regUserId }}</td>
                 <td>{{ row.regDt }}</td>
             </tr>
@@ -48,7 +48,7 @@ export default {
     data() {
         return {
             requestBody: {},
-            list: {},
+            list: {bbsIdx: '', bbsTitle: '', regUserId:'', regDt: ''},
             no: '',
             paging: {
                 block: 0,
@@ -86,8 +86,7 @@ export default {
                 , size: this.size
                 , bbsCategoryCd: "B0001"
             }
-            console.log(this.form);
-            this.$axios.get('//localhost:80/bbs/list', {
+            this.$axios.get(this.$serverUrl + '/bbs/list', {
                 params: this.requestBody,
                 headers: {}
             }).then((res) => {
@@ -95,6 +94,14 @@ export default {
                 this.list = res.data
             }).catch((err) => {
                 console.log(err.message);
+            })
+        },
+        fnGoForm(bbsIdx) {
+            console.log(bbsIdx);
+            this.requestBody.bbsIdx = bbsIdx
+            this.$router.push({
+                path: '/bbs/form',
+                query: this.requestBody
             })
         }
     }

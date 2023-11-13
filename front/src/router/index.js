@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '@/views/AppHome.vue'
 import BoardList from "@/views/BoardList.vue";
+import BoardForm from "@/views/BoardForm.vue";
 
 const routes = [
 	{
@@ -17,6 +18,11 @@ const routes = [
 		path: '/bbs/list',
 		name: 'BoardList',
 		component: BoardList
+	},
+	{
+		path: '/bbs/form',
+		name: 'BoardForm',
+		component: BoardForm
 	}
 ]
 

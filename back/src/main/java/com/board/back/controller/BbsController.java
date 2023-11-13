@@ -23,4 +23,10 @@ public class BbsController {
         return bbsService.getBbsMainList(bbsCategoryCd);
     }
 
+    @GetMapping("/bbs/{bbsIdx}")
+    public BbsMainDto bbsMainForm(@PathVariable Long bbsIdx) {
+        return bbsService.getBbsMainForm(bbsIdx);
+    }
+
+
 }

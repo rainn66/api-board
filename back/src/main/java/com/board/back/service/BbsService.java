@@ -22,6 +22,8 @@ public class BbsService {
 
     /**
      * 게시글 목록 가져오기
+     * @param bbsCategoryCd
+     * @return bbsMainList
      */
     public List<BbsMainDto> getBbsMainList(String bbsCategoryCd) {
         List<BbsMainEntity> BbsMainEntities = bbsMainRepository.findByBbsCategoryCd(bbsCategoryCd);
@@ -44,4 +46,25 @@ public class BbsService {
 
         return bbsMainList;
     }
+
+    /**
+     * 게시글 상세
+     * @param bbsIdx
+     * @return bbsMainForm
+     */
+    public BbsMainDto getBbsMainForm(Long bbsIdx) {
+        BbsMainEntity entity = bbsMainRepository.findByBbsIdx(bbsIdx);
+        BbsMainDto bbsMainForm;
+
+        bbsMainForm = BbsMainDto.builder()
+            .bbsIdx(entity.getBbsIdx())
+            .bbsTitle(entity.getBbsTitle())
+            .bbsContents(entity.getBbsContents())
+            .regUserId(entity.getRegUserId())
+            .regDt(entity.getRegDt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss")))
+            .build();
+
+        return bbsMainForm;
+    }
+
 }
