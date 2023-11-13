@@ -2,22 +2,23 @@ package com.board.back.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Getter
+@Builder
 @Table(name="bbs_main")
-public class BbsMain {
+public class BbsMainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long bbsIdx;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="bbs_category_cd")
-    private BbsCategory bbsCategoryCd;
+    private String bbsCategoryCd;
 
     private String bbsTitle;
 

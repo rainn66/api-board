@@ -14,10 +14,10 @@
             </thead>
             <tbody>
             <tr v-for="(row, idx) in list" :key="idx">
-                <td>{{ row.bbs_idx }}</td>
-                <td><a v-on:click="fnView(`${row.bbs_idx}`)">{{ row.bbs_title }}</a></td>
-                <td>{{ row.reg_user_id }}</td>
-                <td>{{ row.reg_dt }}</td>
+                <td>{{ row.bbsIdx }}</td>
+                <td><a v-on:click="fnView(`${row.bbsIdx}`)">{{ row.bbsTitle }}</a></td>
+                <td>{{ row.regUserId }}</td>
+                <td>{{ row.regDt }}</td>
             </tr>
             </tbody>
         </table>
@@ -80,26 +80,22 @@ export default {
     },
     methods: {
         fnGetList() {
-            this.list = [
-                {
-                    "bbs_idx":1,
-                    "bbs_title": "제목1",
-                    "reg_user_id": "작성자1",
-                    "reg_dt": "작성일시1"
-                },
-                {
-                    "bbs_idx":2,
-                    "bbs_title": "제목1",
-                    "reg_user_id": "작성자1",
-                    "reg_dt": "작성일시1"
-                },
-                {
-                    "bbs_idx":3,
-                    "bbs_title": "제목1",
-                    "reg_user_id": "작성자1",
-                    "reg_dt": "작성일시1"
-                }
-            ]
+            this.requestBody = {
+                keyword: this.keyword
+                , page: this.page
+                , size: this.size
+                , bbsCategoryCd: "B0001"
+            }
+            console.log(this.form);
+            this.$axios.get('//localhost:80/bbs/list', {
+                params: this.requestBody,
+                headers: {}
+            }).then((res) => {
+                console.log(res.data);
+                this.list = res.data
+            }).catch((err) => {
+                console.log(err.message);
+            })
         }
     }
 }

@@ -1,15 +1,20 @@
 package com.board.back.domain;
 
 
-import jakarta.persistence.*;
-import lombok.Getter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Getter
+@Builder
 @Table(name="bbs_category")
-public class BbsCategory {
+public class BbsCategoryEntity {
 
     @Id
     private String bbsCategoryCd;
