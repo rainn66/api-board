@@ -24,9 +24,20 @@ public class BbsController {
     }
 
     @GetMapping("/bbs/{bbsIdx}")
-    public BbsMainDto bbsMainForm(@PathVariable Long bbsIdx) {
-        return bbsService.getBbsMainForm(bbsIdx);
+    public BbsMainDto bbsMainInfo(@PathVariable Long bbsIdx) {
+        return bbsService.getBbsMainInfo(bbsIdx);
     }
 
+    @PostMapping("/bbs/exec/{mode}")
+    public BbsMainEntity bbsMainExec(@RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) {
+
+        if ("R".equals(mode)) {
+            return bbsService.regBbsMainInfo(bbsMainDto);
+        } else if ("U".equals(mode)){
+            return bbsService.modBbsMainInfo(bbsMainDto);
+        } else {
+            return bbsService.delBbsMainInfo(bbsMainDto);
+        }
+    }
 
 }

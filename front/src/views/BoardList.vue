@@ -3,7 +3,13 @@
         <div class="common-buttons">
             <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnGoForm('')">등록</button>
         </div>
-        <table class="w3-table-all">
+        <table class="w3-table-all w3-centered">
+            <colgroup>
+                <col style="width:15%;"/>
+                <col style="width:35%;"/>
+                <col style="width:20%;"/>
+                <col style="width:30%;"/>
+            </colgroup>
             <thead>
             <tr>
                 <th>No</th>
@@ -14,7 +20,7 @@
             </thead>
             <tbody>
             <tr v-for="(row, idx) in list" :key="idx">
-                <td>{{ row.bbsIdx }}</td>
+                <td>{{ idx + 1 }}</td>
                 <td><a v-on:click="fnGoForm(`${row.bbsIdx}`)">{{ row.bbsTitle }}</a></td>
                 <td>{{ row.regUserId }}</td>
                 <td>{{ row.regDt }}</td>
