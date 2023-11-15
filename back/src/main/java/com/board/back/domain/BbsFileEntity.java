@@ -1,4 +1,4 @@
-//package com.board.back.domain;
+package com.board.back.domain;//package com.board.back.domain;
 //
 //import jakarta.persistence.*;
 //import lombok.Getter;

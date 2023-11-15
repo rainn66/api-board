@@ -39,7 +39,7 @@ export default {
     methods: {
         fnGetForm() {
             if (this.bbsIdx !== undefined) {
-                this.$axios.get(this.$serverUrl + '/bbs/' + this.bbsIdx, {
+                this.$axios.get(this.$serverUrl + '/bbsMainInfo/' + this.bbsIdx, {
                     params: this.requestBody
                 }).then((res) => {
                     this.bbsIdx = res.data.bbsIdx
@@ -56,7 +56,7 @@ export default {
         fnGoList() {
             delete this.requestBody.bbsIdx
             this.$router.push({
-                path: '/bbs/list',
+                path: '/bbsMainList',
                 query: this.requestBody
             })
         },
@@ -86,7 +86,7 @@ export default {
                 }
 
                 this.$axios.post(
-                    this.$serverUrl + '/bbs/exec/' + mode
+                    this.$serverUrl + '/bbsMainExec/' + mode
                     , this.form
                 ).then((res) => {
                     if (res.data !== undefined && res.data !== '') {

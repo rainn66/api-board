@@ -1,15 +1,16 @@
 package com.board.back.service;
 
-import com.board.back.domain.BbsCategoryEntity;
 import com.board.back.domain.BbsMainEntity;
-import com.board.back.dto.BbsCategoryDto;
 import com.board.back.dto.BbsMainDto;
+import com.board.back.model.Header;
+import com.board.back.model.Pagination;
 import com.board.back.repository.BbsMainRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,11 +26,11 @@ public class BbsService {
     /**
      * 게시글 목록
      */
-    public List<BbsMainDto> getBbsMainList(String bbsCategoryCd) {
-        List<BbsMainEntity> BbsMainEntities = bbsMainRepository.findByBbsCategoryCdAndDelYn(bbsCategoryCd, "N");
+    public Header<List<BbsMainDto>> getBbsMainList(String bbsCategoryCd, Pageable pageable) {
+        Page<BbsMainEntity> bbsMainEntities = bbsMainRepository.findByBbsCategoryCdAndDelYn(bbsCategoryCd, "N", pageable);
         List<BbsMainDto> bbsMainList = new ArrayList<>();
 
-        for (BbsMainEntity entity : BbsMainEntities) {
+        for (BbsMainEntity entity : bbsMainEntities) {
             BbsMainDto dto = BbsMainDto.builder()
                 .bbsIdx(entity.getBbsIdx())
                 .bbsCategoryCd(entity.getBbsCategoryCd())
@@ -44,7 +45,14 @@ public class BbsService {
             bbsMainList.add(dto);
         }
 
-        return bbsMainList;
+        Pagination pagination = new Pagination(
+            (int) bbsMainEntities.getTotalElements()
+            , pageable.getPageNumber() + 1
+            , pageable.getPageSize()
+            , 10
+        );
+
+        return Header.OK(bbsMainList, pagination);
     }
 
     /**

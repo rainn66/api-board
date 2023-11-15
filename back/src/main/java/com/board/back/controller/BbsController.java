@@ -1,14 +1,16 @@
 package com.board.back.controller;
 
-import com.board.back.domain.BbsCategoryEntity;
 import com.board.back.domain.BbsMainEntity;
-import com.board.back.dto.BbsCategoryDto;
 import com.board.back.dto.BbsMainDto;
+import com.board.back.model.Header;
 import com.board.back.service.BbsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Slf4j
@@ -18,17 +20,19 @@ import java.util.List;
 public class BbsController {
     private final BbsService bbsService;
 
-    @GetMapping("/bbs/list")
-    public List<BbsMainDto> bbsMainList(@RequestParam(value="bbsCategoryCd") String bbsCategoryCd) {
-        return bbsService.getBbsMainList(bbsCategoryCd);
+    @GetMapping("/bbsMainList")
+    public Header<List<BbsMainDto>> bbsMainList(
+        @PageableDefault(sort = {"bbsIdx"}, direction = Sort.Direction.DESC) Pageable pageable
+        , @RequestParam(value = "bbsCategoryCd") String bbsCategoryCd) {
+        return bbsService.getBbsMainList(bbsCategoryCd, pageable);
     }
 
-    @GetMapping("/bbs/{bbsIdx}")
+    @GetMapping("/bbsMainInfo/{bbsIdx}")
     public BbsMainDto bbsMainInfo(@PathVariable Long bbsIdx) {
         return bbsService.getBbsMainInfo(bbsIdx);
     }
 
-    @PostMapping("/bbs/exec/{mode}")
+    @PostMapping("/bbsMainExec/{mode}")
     public BbsMainEntity bbsMainExec(@RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) {
 
         if ("R".equals(mode)) {

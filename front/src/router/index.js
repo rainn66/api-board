@@ -15,12 +15,12 @@ const routes = [
 		component: () => import('../views/AppAbout.vue')
 	},
 	{
-		path: '/bbs/list',
+		path: '/bbsMainList',
 		name: 'BoardList',
 		component: BoardList
 	},
 	{
-		path: '/bbs/form',
+		path: '/bbsMainInfo',
 		name: 'BoardForm',
 		component: BoardForm
 	}
