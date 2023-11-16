@@ -4,7 +4,9 @@ import com.board.back.domain.BbsMainEntity;
 import com.board.back.dto.BbsMainDto;
 import com.board.back.model.Header;
 import com.board.back.model.Pagination;
+import com.board.back.model.SearchCondition;
 import com.board.back.repository.BbsMainRepository;
+import com.board.back.repository.BbsMainRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,13 @@ public class BbsService {
 
     private final BbsMainRepository bbsMainRepository;
 
+    private final BbsMainRepositoryCustom bbsMainRepositoryCustom;
+
     /**
      * 게시글 목록
      */
-    public Header<List<BbsMainDto>> getBbsMainList(String bbsCategoryCd, Pageable pageable) {
-        Page<BbsMainEntity> bbsMainEntities = bbsMainRepository.findByBbsCategoryCdAndDelYn(bbsCategoryCd, "N", pageable);
+    public Header<List<BbsMainDto>> getBbsMainList(Pageable pageable, SearchCondition searchCondition, String bbsCategoryCd) {
+        Page<BbsMainEntity> bbsMainEntities = bbsMainRepositoryCustom.findByCategoryCdAndDelYnSearchCondition(pageable, searchCondition, bbsCategoryCd, "N");
         List<BbsMainDto> bbsMainList = new ArrayList<>();
 
         for (BbsMainEntity entity : bbsMainEntities) {

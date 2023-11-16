@@ -3,6 +3,7 @@ package com.board.back.controller;
 import com.board.back.domain.BbsMainEntity;
 import com.board.back.dto.BbsMainDto;
 import com.board.back.model.Header;
+import com.board.back.model.SearchCondition;
 import com.board.back.service.BbsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,9 @@ public class BbsController {
     @GetMapping("/bbsMainList")
     public Header<List<BbsMainDto>> bbsMainList(
         @PageableDefault(sort = {"bbsIdx"}, direction = Sort.Direction.DESC) Pageable pageable
+        , SearchCondition searchCondition
         , @RequestParam(value = "bbsCategoryCd") String bbsCategoryCd) {
-        return bbsService.getBbsMainList(bbsCategoryCd, pageable);
+        return bbsService.getBbsMainList(pageable, searchCondition, bbsCategoryCd);
     }
 
     @GetMapping("/bbsMainInfo/{bbsIdx}")

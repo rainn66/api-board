@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface BbsMainRepository extends JpaRepository<BbsMainEntity, Long> {
 
-    Page<BbsMainEntity> findByBbsCategoryCdAndDelYn(String bbsCategoryCd, String delYn, Pageable pageable);
+    //Page<BbsMainEntity> findByBbsCategoryCdAndDelYn(Pageable pageable, String bbsCategoryCd, String delYn);
 
     BbsMainEntity findByBbsIdx(Long bbsIdx);
 

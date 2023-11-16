@@ -1,6 +1,16 @@
 <template>
-    <div class="board-list">
+    <div class="board-list" style="margin-top:50px;">
+        <div style="float:left;">
+            <select class="w3-select w3-border" style="margin-right:20px;float:left;height:50px;width:20%;min-width:100px;" v-model="searchKey">
+                <option value="">선택</option>
+                <option value="regUserId">작성자</option>
+                <option value="bbsTitle">제목</option>
+                <option value="bbsContents">내용</option>
+            </select>
+            <input class="w3-input w3-border" type="text" style="height:50px;width:50%;min-width:200px;" v-model="searchVal" @keyup.enter="fnGetList"/>
+        </div>
         <div class="common-buttons">
+            <button class="w3-button w3-round w3-blue-gray" @click="fnGetList()">검색</button>&nbsp;
             <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnGoForm('')">등록</button>
         </div>
         <table class="w3-table-all w3-centered">
@@ -29,19 +39,19 @@
         </table>
         <div class="pagination w3-bar w3-padding-16 w3-small" v-if="paging.totalListCnt > 0">
             <span class="pg">
-                <a href="javascript:" @click="fnGetList(1)" class="first w3-button w3-border">&lt;&lt;</a>
+                <a href="javascript:" @click="fnGetList(1)" class="first w3-button">&lt;&lt;</a>
                 <a href="javascript:" v-if="paging.startPage > 10" @click="fnGetList(`${paging.startPage-1}`)"
                 class="prev w3-button w3-border">&lt;</a>
                 <template v-for="(n,index) in pageNavigator()">
                     <template v-if="paging.page===n">
-                        <strong class="w3-button w3-border w3-green" :key="index">{{ n }}</strong>
+                        <strong class="w3-button w3-green" :key="index">{{ n }}</strong>
                     </template>
                     <template v-else>
-                        <a class="w3-button w3-border" href="javascript:;" @click="fnGetList(`${n}`)" :key="index">{{ n }}</a>
+                        <a class="w3-button " href="javascript:;" @click="fnGetList(`${n}`)" :key="index">{{ n }}</a>
                     </template>
                 </template>
                 <a href="javascript:" v-if="paging.totalPageCnt > paging.endPage" @click="fnGetList(`${paging.endPage+1}`)" class="next w3-button w3-border">&gt;</a>
-                <a href="javascript:" @click="fnGetList(`${paging.totalPageCnt}`)" class="last w3-button w3-border">&gt;&gt;</a>
+                <a href="javascript:" @click="fnGetList(`${paging.totalPageCnt}`)" class="last w3-button">&gt;&gt;</a>
             </span>
         </div>
     </div>
@@ -71,7 +81,8 @@ export default {
             }, //페이징 데이터
             page: this.$route.query.page ? this.$route.query.page : 1,
             size: this.$route.query.size ? this.$route.query.size : 10,
-            keyword: this.$route.query.keyword,
+            searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
+            searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
             pageNavigator: function () { //페이징 처리 for문 커스텀
                 let pageNumber = [] //;
                 let start_page = this.paging.startPage;
@@ -86,14 +97,15 @@ export default {
     },
     methods: {
         fnGetList(pageNum) {
-            if (pageNum) {
+            if (pageNum === undefined) {
                 pageNum = 1;
             }
             this.requestBody = {
-                keyword: this.keyword
-                , page: pageNum
+                page: pageNum
                 , size: this.size
                 , bbsCategoryCd: "B0001"
+                , searchKey: this.searchKey
+                , searchVal: this.searchVal
             }
             this.$axios.get(this.$serverUrl + '/bbsMainList', {
                 params: this.requestBody,
