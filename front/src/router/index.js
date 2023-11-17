@@ -1,13 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '@/views/AppHome.vue'
-import BoardList from "@/views/BoardList.vue";
-import BoardForm from "@/views/BoardForm.vue";
+import AppLogin from '@/views/common/AppLogin.vue'
+import BoardList from "@/views/board/BoardList.vue";
+import BoardForm from "@/views/board/BoardForm.vue";
 
 const routes = [
 	{
 		path: '/',
 		name: 'AppHome',
 		component: AppHome
+	},
+	{
+		path: '/login',
+		name: 'AppLogin',
+		component: AppLogin
 	},
 	{
 		path: '/about',
