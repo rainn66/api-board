@@ -14,7 +14,8 @@
     "popper.js": "^1.16.1",
     "vue": "^3.2.13",
     "vue-resizable": "^2.1.7",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
