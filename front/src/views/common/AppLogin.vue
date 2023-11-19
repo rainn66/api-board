@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import {mapActions, mapGetters} from 'vuex'
+
 export default {
     data() {
         return {
@@ -28,19 +30,31 @@ export default {
         }
     },
     methods: {
-        fnLogin() {
+        ...mapActions(['login']),
+
+        async fnLogin() {
             if (this.userId === '') {
                 alert('ID를 입력하세요.')
                 return
             }
-
             if (this.userPassword === '') {
                 alert('비밀번호를 입력하세요.')
                 return
             }
-
-            alert('로그인 되었습니다.')
+            try {
+                let loginResult = await this.login({userId: this.userId, userPassword:this.userPassword})
+                if (loginResult) {
+                    alert('로그인 : ' + loginResult);
+                }
+            } catch (err) {
+                alert(err.message);
+            }
         }
+    },
+    computed: {
+        ...mapGetters({
+            errorState: 'getErrorState'
+        })
     }
 }
 </script>
