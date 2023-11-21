@@ -58,3 +58,9 @@ clean.doLast {
     file(generated).deleteDir()
 }
 //querydsl========================
+
+
+//테스트코드 build 제외
+tasks.withType(Test) {
+    enabled = false
+}

@@ -22,12 +22,14 @@ public class BbsMainRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     public Page<BbsMainEntity> findByCategoryCdAndDelYnSearchCondition(Pageable pageable, SearchCondition searchCondition, String bbsCategoryCd, String delYn) {
+
+        //TODO: 이방법은 쿼리를 두번 조회하게 됨(수정필요)
         JPAQuery<BbsMainEntity> query = queryFactory.selectFrom(bbsMainEntity)
             .where(searchKeywords(searchCondition.getSearchKey(), searchCondition.getSearchVal())
                 , bbsMainEntity.bbsCategoryCd.eq(bbsCategoryCd)
                 , bbsMainEntity.delYn.eq(delYn));
 
-        long total = query.stream().count();   //여기서 전체 카운트 후 아래에서 조건작업
+        long total = query.stream().count();
 
         List<BbsMainEntity> results = query
             .where(searchKeywords(searchCondition.getSearchKey(), searchCondition.getSearchVal())

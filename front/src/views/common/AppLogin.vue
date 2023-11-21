@@ -44,11 +44,16 @@ export default {
             try {
                 let loginResult = await this.login({userId: this.userId, userPassword:this.userPassword})
                 if (loginResult) {
-                    alert('로그인 : ' + loginResult);
+                    this.fnGoHome()
                 }
             } catch (err) {
                 alert(err.message);
             }
+        },
+        fnGoHome() {
+            this.$router.push({
+                name: 'AppHome'
+            })
         }
     },
     computed: {

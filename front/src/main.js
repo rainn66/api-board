@@ -5,9 +5,10 @@ import 'mutationobserver-shim'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import store from './vuex/store'
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
-//api server
 app.config.globalProperties.$serverUrl = '//localhost:80'
-app.use(router).mount('#app')
+app.config.globalProperties.$store = store;
+app.use(router).use(store).mount('#app')

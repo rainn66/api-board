@@ -109,7 +109,7 @@ export default {
             }
             this.$axios.get(this.$serverUrl + '/bbsMainList', {
                 params: this.requestBody,
-                headers: {}
+                headers: {'Content-type': 'application/json'}
             }).then((res) => {
                 if (res.data.resultCode === "OK") {
                     console.log(res.data);

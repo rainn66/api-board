@@ -1,24 +1,51 @@
-//package com.board.back.controller;
-//
-//import com.board.back.dto.UserDto;
-//import com.board.back.service.UserService;
-//import jakarta.validation.Valid;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.ResponseBody;
-//
-//@Controller
-//@RequiredArgsConstructor
-//@ResponseBody
-//public class UserController {
-//
-//    private final UserService userService;
-//
-//    @PostMapping("/signup")
-//    public void signUpUser(@RequestBody @Valid UserDto userForm) throws Exception {
-//        userService.signUpUser(userForm);
-//    }
-//
-//}
+package com.board.back.controller;
+
+import com.board.back.service.UserService;
+import com.board.back.util.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+@RequiredArgsConstructor
+@CrossOrigin
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> paramMap) {
+        String userId = paramMap.get("userId");
+        String userPassword = paramMap.get("userPassword");
+
+        UserDetails loginUser = userService.loadUserByUsername(userId); //userId로 정보 가져오기
+
+        Authentication authentication = authenticationManager.authenticate(     //가져온 정보와 입력한 비밀번호로 검증
+            new UsernamePasswordAuthenticationToken(loginUser, userPassword)
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);   // 검증 통과 후 authentication 세팅
+
+        String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());     //accessToken 생성
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userId", loginUser.getUsername());
+        result.put("userToken", accessToken);
+        result.put("userRole", loginUser.getAuthorities().stream().findFirst().get().getAuthority());
+
+        return ResponseEntity.ok(result);
+    }
+}

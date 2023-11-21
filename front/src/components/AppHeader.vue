@@ -11,8 +11,16 @@
 
 <script>
 export default {
-
+    name: 'AppHeader',
+    props: {
+        msg: String
+    }
 }
+
+// window.onload = function() {
+//     console.log("");
+//     console.log("[header]")
+// }
 </script>
 
 

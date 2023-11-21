@@ -7,16 +7,16 @@
 
 <script>
 export default {
-    name: 'vueFooter',
+    name: 'AppFooter',
     props: {
         msg: String
     }
 }
 
-window.onload = function() {
-    console.log("");
-    console.log("[footer]")
-}
+// window.onload = function() {
+//     console.log("");
+//     console.log("[footer]")
+// }
 
 
 </script>
