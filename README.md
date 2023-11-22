@@ -4,7 +4,7 @@ JPA를 공부하기에 좋은 블로그를 접하게되어, 비슷한 구조로 
 Spring boot v3, java17, Vue.js v3
 
 ### 기능
-- 로그인
+- 로그인(Spring Security 6.0)
 - 글쓰기/수정/삭제
 
 ### 사용기술
