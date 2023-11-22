@@ -97,6 +97,7 @@ export default {
     },
     methods: {
         fnGetList(pageNum) {
+
             if (pageNum === undefined) {
                 pageNum = 1;
             }
@@ -109,7 +110,7 @@ export default {
             }
             this.$axios.get(this.$serverUrl + '/bbsMainList', {
                 params: this.requestBody,
-                headers: {'Content-type': 'application/json'}
+                headers: {}
             }).then((res) => {
                 if (res.data.resultCode === "OK") {
                     console.log(res.data);

@@ -1,10 +1,10 @@
 import './assets/common.css'
+import 'mutationobserver-shim'
 
 import { createApp } from 'vue'
-import 'mutationobserver-shim'
 import App from './App.vue'
 import router from './router'
-import axios from 'axios'
+import axios from './util/axios'
 import store from './vuex/store'
 
 const app = createApp(App)

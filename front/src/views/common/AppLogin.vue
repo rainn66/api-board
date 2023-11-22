@@ -34,17 +34,18 @@ export default {
 
         async fnLogin() {
             if (this.userId === '') {
-                alert('ID를 입력하세요.')
-                return
+                alert('ID를 입력하세요.');
+                return;
             }
             if (this.userPassword === '') {
-                alert('비밀번호를 입력하세요.')
-                return
+                alert('비밀번호를 입력하세요.');
+                return;
             }
             try {
-                let loginResult = await this.login({userId: this.userId, userPassword:this.userPassword})
+                let loginResult = await this.login({userId: this.userId, userPassword:this.userPassword});
                 if (loginResult) {
-                    this.fnGoHome()
+                    this.$store.state.isLogin=true;
+                    this.fnGoHome();
                 }
             } catch (err) {
                 alert(err.message);
