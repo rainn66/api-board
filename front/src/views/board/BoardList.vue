@@ -29,6 +29,9 @@
             </tr>
             </thead>
             <tbody>
+            <tr v-if="list.size < 1">
+                <td>조회된 값이 없습니다.</td>
+            </tr>
             <tr v-for="(row, idx) in list" :key="idx">
                 <td>{{ idx + 1 }}</td>
                 <td><a v-on:click="fnGoForm(`${row.bbsIdx}`)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.bbsTitle }}</a></td>
