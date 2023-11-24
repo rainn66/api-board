@@ -5,10 +5,10 @@
             <div id="loginForm">
                 <form @submit.prevent="fnLogin();">
                     <p>
-                        <input class="w3-input" style="width:30%;min-width:200px;" name="userId" placeholder="Enter your ID" v-model="userId"><br>
+                        <input style="width:30%;min-width:200px;" name="userId" placeholder="Enter your ID" v-model="userId"><br>
                     </p>
                     <p>
-                        <input name="userPassword" style="width:30%;min-width:200px;" class="w3-input" placeholder="Enter your password" v-model="userPassword" type="password">
+                        <input style="width:30%;min-width:200px;" name="userPassword" placeholder="Enter your password" v-model="userPassword" type="password">
                     </p>
                     <p>
                         <button type="submit" class="w3-button w3-green w3-round">Login</button>

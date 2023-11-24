@@ -13,6 +13,7 @@
             </textarea>
         </div>
         <div class="board-contents">
+
             <input type="text" v-model="regUserId" class="w3-input w3-border" placeholder="작성자를 입력해주세요.">
         </div>
         <input type="hidden" v-model="bbsCategoryCd" />
@@ -66,10 +67,20 @@ export default {
                 if (this.bbsIdx === undefined || this.bbsIdx === '') {
                     mode = 'R';
                 } else {
+                    if (this.regUserId !== localStorage.getItem('userId')) {
+                        console.log(this.regUserId);
+                        console.log(localStorage.getItem('userId'));
+                        alert('수정 권한이 없습니다.(작성자만 가능합니다.)');
+                        return;
+                    }
                     mode = 'U';
                 }
                 message = "저장";
             } else {
+                if (this.regUserId !== localStorage.getItem('userId')) {
+                    alert('삭제 권한이 없습니다.(작성자만 가능합니다.)');
+                    return;
+                }
                 message = "삭제";
             }
 

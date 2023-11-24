@@ -31,8 +31,8 @@ export default {
 			if (userInfoResponse.data.length === 0) {
 				return 'notFound'
 			} else {
-				localStorage.setItem('userToken', userInfoResponse.data.userToken)
-				localStorage.setItem('userRole', userInfoResponse.data.userRole)
+				localStorage.setItem('userToken', userInfoResponse.data.userToken);
+				localStorage.setItem('userRole', userInfoResponse.data.userRole);
 				return userInfoResponse
 			}
 		} catch (err) {

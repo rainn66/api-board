@@ -1,6 +1,6 @@
 <template>
     <div class="side-bar-wrapper">
-        <VueResizable class="resizable-side-bar" :width="200" :min-width="200" :max-width="Infinity" :active="['r']">
+        <VueResizable class="resizable-side-bar" style="height:100%;" :width="200" :min-width="200" :max-width="Infinity" :active="['r']">
             <div class="side-bar">
 
             </div>
