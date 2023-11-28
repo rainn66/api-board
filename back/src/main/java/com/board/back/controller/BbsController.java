@@ -5,6 +5,9 @@ import com.board.back.dto.BbsMainDto;
 import com.board.back.model.Header;
 import com.board.back.model.SearchCondition;
 import com.board.back.service.BbsService;
+import com.board.back.util.JwtUtil;
+import com.board.back.util.TokenRequestFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -20,6 +23,8 @@ import java.util.List;
 @RestController
 public class BbsController {
     private final BbsService bbsService;
+    private final JwtUtil jwtUtil;
+    private final TokenRequestFilter tokenRequestFilter;
 
     @GetMapping("/bbsMainList")
     public Header<List<BbsMainDto>> bbsMainList(
@@ -35,13 +40,23 @@ public class BbsController {
     }
 
     @PostMapping("/bbsMainExec/{mode}")
-    public BbsMainEntity bbsMainExec(@RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) {
+    public BbsMainEntity bbsMainExec(HttpServletRequest request, @RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) throws Exception {
+
+        String userId = jwtUtil.validateToken(tokenRequestFilter.parseJwt(request));
+
+        log.debug("debug userId {}", userId);
 
         if ("R".equals(mode)) {
             return bbsService.regBbsMainInfo(bbsMainDto);
         } else if ("U".equals(mode)){
+            if (!userId.equals(bbsMainDto.getRegUserId())) {
+                throw new Exception("글 수정 권한이 없습니다.");
+            }
             return bbsService.modBbsMainInfo(bbsMainDto);
         } else {
+            if (!userId.equals(bbsMainDto.getRegUserId())) {
+                throw new Exception("글 삭제 권한이 없습니다.");
+            }
             return bbsService.delBbsMainInfo(bbsMainDto);
         }
     }

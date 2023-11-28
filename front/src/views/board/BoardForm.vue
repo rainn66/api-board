@@ -67,20 +67,10 @@ export default {
                 if (this.bbsIdx === undefined || this.bbsIdx === '') {
                     mode = 'R';
                 } else {
-                    if (this.regUserId !== localStorage.getItem('userId')) {
-                        console.log(this.regUserId);
-                        console.log(localStorage.getItem('userId'));
-                        alert('수정 권한이 없습니다.(작성자만 가능합니다.)');
-                        return;
-                    }
                     mode = 'U';
                 }
                 message = "저장";
             } else {
-                if (this.regUserId !== localStorage.getItem('userId')) {
-                    alert('삭제 권한이 없습니다.(작성자만 가능합니다.)');
-                    return;
-                }
                 message = "삭제";
             }
 
