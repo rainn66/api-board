@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Header<T> {
+
     private LocalDateTime  transactionTime;
     private String resultCode;
     private String description;

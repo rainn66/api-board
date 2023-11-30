@@ -90,11 +90,15 @@ export default {
                     this.$serverUrl + '/bbsMainExec/' + mode
                     , this.form
                 ).then((res) => {
-                    if (res.data !== undefined && res.data !== '') {
+                    console.log(res);
+                    if (res.data.resultCd === "FAIL") {
+                        alert(res.data.msg);
+                    } else {
                         alert(message+"되었습니다.");
                         this.fnGoList();
                     }
                 }).catch((err) => {
+                    alert("" + err);
                     console.log(err);
                 });
             }

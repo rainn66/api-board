@@ -2,7 +2,11 @@
     <div class="side-bar-wrapper">
         <VueResizable class="resizable-side-bar" style="height:100%;" :width="200" :min-width="200" :max-width="Infinity" :active="['r']">
             <div class="side-bar">
-
+                <router-link to="/">Home</router-link>
+                <br>
+                <router-link to="/about">About</router-link>
+                <br>
+                <router-link to="/bbsMainList">Board</router-link>
             </div>
         </VueResizable>
         <button class="side-bar-active-btn" @click="showSideBar">

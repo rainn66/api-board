@@ -1,6 +1,5 @@
 package com.board.back.controller;
 
-import com.board.back.domain.BbsMainEntity;
 import com.board.back.dto.BbsMainDto;
 import com.board.back.model.Header;
 import com.board.back.model.SearchCondition;
@@ -11,13 +10,16 @@ import com.board.back.util.TokenRequestFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Pageable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,29 +45,42 @@ public class BbsController {
     }
 
     @PostMapping("/bbsMainExec/{mode}")
-    public BbsMainEntity bbsMainExec(HttpServletRequest request, @RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) throws Exception {
+    public ResponseEntity<Map<String, Object>> bbsMainExec(HttpServletRequest request, @RequestBody BbsMainDto bbsMainDto, @PathVariable String mode) throws Exception {
 
-        String jwtToken = tokenRequestFilter.parseJwt(request);
+        Map<String, Object> result = new HashMap<>();
 
-        String userId = jwtUtil.getUserFromToken(jwtToken);
+        try {
+            String jwtToken = tokenRequestFilter.parseJwt(request);
 
-        UserDetails userInfo = userService.loadUserByUsername(userId);
+            String userId = jwtUtil.getUserFromToken(jwtToken);
 
-        log.debug("debug userId {}", userId);
+            UserDetails userInfo = userService.loadUserByUsername(userId);
 
-        if ("R".equals(mode)) {
-            return bbsService.regBbsMainInfo(bbsMainDto);
-        } else if ("U".equals(mode)){
-            if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {
-                throw new Exception("글 수정 권한이 없습니다.");
+            log.debug("debug userId {}", userId);
+
+            if ("R".equals(mode)) {
+                bbsService.regBbsMainInfo(bbsMainDto);
+            } else if ("U".equals(mode)) {
+                if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {
+                    result.put("resultCd", "FAIL");
+                    result.put("msg", "글 수정 권한이 없습니다.");
+                    return ResponseEntity.ok(result);
+                }
+                bbsService.modBbsMainInfo(bbsMainDto);
+            } else {
+                if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {
+                    result.put("resultCd", "FAIL");
+                    result.put("msg", "글 삭제 권한이 없습니다.");
+                    return ResponseEntity.ok(result);
+                }
+                bbsService.delBbsMainInfo(bbsMainDto);
             }
-            return bbsService.modBbsMainInfo(bbsMainDto);
-        } else {
-            if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {
-                throw new Exception("글 삭제 권한이 없습니다.");
-            }
-            return bbsService.delBbsMainInfo(bbsMainDto);
+        } catch (Exception e) {
+
+            log.error("", e);
         }
+        result.put("resultCd", "SUCCESS");
+        return ResponseEntity.ok(result);
     }
 
 }

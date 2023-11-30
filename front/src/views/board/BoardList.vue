@@ -116,7 +116,7 @@ export default {
                 headers: {}
             }).then((res) => {
                 if (res.data.resultCode === "OK") {
-                    console.log(res.data);
+                    //console.log(res.data);
                     this.list = res.data.data;
                     this.paging = res.data.pagination;
                     this.no = this.paging.totalListCnt - ((this.paging.page - 1) * this.paging.pageSize);
@@ -126,7 +126,7 @@ export default {
             })
         },
         fnGoForm(bbsIdx) {
-            console.log(bbsIdx);
+            //console.log(bbsIdx);
             this.requestBody.bbsIdx = bbsIdx
             this.$router.push({
                 path: '/bbsMainInfo',
