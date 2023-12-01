@@ -13,8 +13,7 @@
             </textarea>
         </div>
         <div class="board-contents">
-
-            <input type="text" v-model="regUserId" class="w3-input w3-border" placeholder="작성자를 입력해주세요.">
+            <input type="text" v-model="regUserId" class="w3-input w3-border" placeholder="자동 등록 항목입니다." readonly>
         </div>
         <input type="hidden" v-model="bbsCategoryCd" />
         <input type="hidden" v-model="bbsIdx" />

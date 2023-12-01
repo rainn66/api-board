@@ -50,15 +50,13 @@ public class BbsController {
         Map<String, Object> result = new HashMap<>();
 
         try {
+            //token 작성자 확인
             String jwtToken = tokenRequestFilter.parseJwt(request);
-
             String userId = jwtUtil.getUserFromToken(jwtToken);
-
             UserDetails userInfo = userService.loadUserByUsername(userId);
 
-            log.debug("debug userId {}", userId);
-
             if ("R".equals(mode)) {
+                bbsMainDto.setRegUserId(userId);
                 bbsService.regBbsMainInfo(bbsMainDto);
             } else if ("U".equals(mode)) {
                 if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {
