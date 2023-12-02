@@ -56,7 +56,7 @@ public class BbsController {
             UserDetails userInfo = userService.loadUserByUsername(userId);
 
             if ("R".equals(mode)) {
-                bbsMainDto.setRegUserId(userId);
+                bbsMainDto.setRegUserId(userId);//token 작성자 바인딩
                 bbsService.regBbsMainInfo(bbsMainDto);
             } else if ("U".equals(mode)) {
                 if (!userInfo.getUsername().equals(bbsMainDto.getRegUserId())) {

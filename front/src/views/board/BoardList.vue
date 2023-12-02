@@ -7,11 +7,12 @@
                 <option value="bbsTitle">제목</option>
                 <option value="bbsContents">내용</option>
             </select>
-            <input class="w3-input w3-border" type="text" style="height:50px;width:50%;min-width:200px;" v-model="searchVal" @keyup.enter="fnGetList"/>
+            <input class="w3-input w3-border" type="text" style="height:50px;width:50%;min-width:200px;" v-model="searchVal" @keyup.enter="fnGetList();"/>
+            <input type="hidden" v-model="bbsCategoryCd" />
         </div>
         <div class="common-buttons">
-            <button class="w3-button w3-round w3-blue-gray" @click="fnGetList()">검색</button>&nbsp;
-            <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnGoForm('')">등록</button>
+            <button class="w3-button w3-round w3-blue-gray" @click="fnGetList();">검색</button>&nbsp;
+            <button type="button" class="w3-button w3-round w3-blue-gray" @click="fnGoForm('');">등록</button>
         </div>
         <table class="w3-table-all w3-centered">
             <colgroup>
@@ -86,6 +87,7 @@ export default {
             size: this.$route.query.size ? this.$route.query.size : 10,
             searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
             searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
+            bbsCategoryCd: this.$route.query.bbsCategoryCd ? this.$route.query.bbsCategoryCd : 'B0001',
             pageNavigator: function () { //페이징 처리 for문 커스텀
                 let pageNumber = [] //;
                 let start_page = this.paging.startPage;
@@ -107,7 +109,7 @@ export default {
             this.requestBody = {
                 page: pageNum
                 , size: this.size
-                , bbsCategoryCd: "B0001"
+                , bbsCategoryCd: this.bbsCategoryCd
                 , searchKey: this.searchKey
                 , searchVal: this.searchVal
             }
@@ -135,6 +137,8 @@ export default {
         }
     }
 }
+
+
 </script>
 
 <style scoped>

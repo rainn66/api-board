@@ -6,7 +6,11 @@
                 <br>
                 <router-link to="/about">About</router-link>
                 <br>
-                <router-link to="/bbsMainList">Board</router-link>
+                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0001'}}">Notice Board</router-link>
+                <br>
+                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0002'}}">Data Board</router-link>
+                <br>
+                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0003'}}">Diary Board</router-link>
             </div>
         </VueResizable>
         <button class="side-bar-active-btn" @click="showSideBar">
@@ -32,6 +36,11 @@ export default {
         showSideBar() {
             this.isVisibleSideBar = !this.isVisibleSideBar;
         }
+    },
+    watch: {
+        $route(to, form) {
+            if (to.path !== form.path) this.data(this.$route.query.index);
+        },
     }
 }
 </script>
