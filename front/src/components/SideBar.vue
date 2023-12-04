@@ -36,11 +36,6 @@ export default {
         showSideBar() {
             this.isVisibleSideBar = !this.isVisibleSideBar;
         }
-    },
-    watch: {
-        $route(to, form) {
-            if (to.path !== form.path) this.data(this.$route.query.index);
-        },
     }
 }
 </script>

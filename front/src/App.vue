@@ -1,7 +1,7 @@
 <template>
     <AppHeader></AppHeader>
     <SideBar class="side-bar"/>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
     <AppFooter></AppFooter>
 </template>
 
