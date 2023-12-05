@@ -12,6 +12,7 @@
                     </p>
                     <p>
                         <button type="submit" class="w3-button w3-green w3-round">Login</button>
+                        <button @click="fnGoSignUp" type="button" class="w3-button w3-green w3-round">Sign Up</button>
                     </p>
                 </form>
             </div>
@@ -54,6 +55,11 @@ export default {
         fnGoHome() {
             this.$router.push({
                 name: 'AppHome'
+            })
+        },
+        fnGoSignUp() {
+            this.$router.push({
+                name: 'AppSignUp'
             })
         }
     },

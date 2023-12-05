@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AppHome from '@/views/AppHome.vue'
 import AppLogin from '@/views/common/AppLogin.vue'
+import SignUp from '@/views/common/AppSignUp.vue'
 import BoardList from '@/views/board/BoardList.vue'
 import BoardForm from '@/views/board/BoardForm.vue'
 import store from '@/vuex/store'
@@ -43,6 +44,11 @@ const routes = [
 		name: 'BoardForm',
 		component: BoardForm,
 		beforeEnter: requireAuth()
+	},
+	{
+		path: '/signUp',
+		name: 'SignUp',
+		component: SignUp
 	}
 ]
 
