@@ -1,27 +1,28 @@
 package com.board.back.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name="user")
-public class UserEntity {
+@Table(name="users")
+@Getter
+public class UserEntity extends BaseEntity{
 
     @Id
+    @GeneratedValue
+    @Column(name = "user_idx")
+    private String userIdx;
+
+    @Column(name = "user_id")
     private String userId;
 
-    private String userNm;
+    private String userName;
 
     private String userPassword;
-
-    private LocalDateTime regDt;
-
 }

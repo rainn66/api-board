@@ -1,27 +1,35 @@
 package com.board.back.domain;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Getter
+@EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-@EntityListeners({AuditingEntityListener.class})
-public class DateTimeEntity {
+@Getter
+public class BaseEntity {
+
+    @CreatedBy
+    @Column(name = "reg_user_id", updatable = false)
+    private String regUserId;
+
+    @LastModifiedBy
+    @Column(name = "chg_user_id")
+    private String chgUserId;
 
     @CreatedDate
-    @Column(name="reg_dt")
+    @Column(name="reg_dt", updatable = false)
     private LocalDateTime regDt;
 
     @LastModifiedDate
     @Column(name="chg_dt")
     private LocalDateTime chgDt;
-
 }
