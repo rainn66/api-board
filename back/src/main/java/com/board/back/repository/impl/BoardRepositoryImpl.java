@@ -1,0 +1,74 @@
+package com.board.back.repository.impl;
+
+import com.board.back.dto.BoardDto;
+import com.board.back.dto.QBoardDto;
+import com.board.back.entity.QBoard;
+import com.board.back.entity.QBoardMain;
+import com.board.back.model.BoardSearchCondition;
+import com.board.back.repository.BoardRepositoryCustom;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+
+import static com.board.back.entity.QBoard.*;
+import static com.board.back.entity.QBoardMain.*;
+
+public class BoardRepositoryImpl implements BoardRepositoryCustom {
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    public BoardRepositoryImpl(EntityManager em) {
+        this.jpaQueryFactory = new JPAQueryFactory(em);
+    }
+
+    @Override
+    public Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, String bbsCategoryCd) {
+
+        List<BoardDto> result = jpaQueryFactory
+                .select(new QBoardDto(
+                        board.boardIdx,
+                        board.boardMain.boardMainIdx,
+                        board.boardTitle,
+                        board.boardContent,
+                        board.topFixYn,
+                        board.regUserId,
+                        board.regDt
+                        )
+                )
+                .from(board)
+                .leftJoin(board.boardMain, boardMain)
+                .where(bbsTitleEq(condition.getBbsTitle()),
+                        regUserIdEq(condition.getRegUserId()),
+                        board.delYn.eq("N"))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = jpaQueryFactory
+                .select(board.count())
+                .from(board)
+                .leftJoin(board.boardMain, boardMain)
+                .where(bbsTitleEq(condition.getBbsTitle()),
+                        regUserIdEq(condition.getRegUserId()))
+                .fetchOne();
+
+        return new PageImpl<>(result, pageable, total);
+    }
+
+    private Predicate bbsTitleEq(String bbsTitle) {
+        return StringUtils.hasText(bbsTitle) ? board.boardTitle.eq(bbsTitle) : null;
+    }
+
+    private Predicate regUserIdEq(String regUserId) {
+        return StringUtils.hasText(regUserId) ? board.regUserId.eq(regUserId) : null;
+    }
+
+
+
+}

@@ -1,8 +1,6 @@
-package com.board.back.domain;
+package com.board.back.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,4 +30,17 @@ public class BaseEntity {
     @LastModifiedDate
     @Column(name="chg_dt")
     private LocalDateTime chgDt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        regDt = now;
+        chgDt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        chgDt = LocalDateTime.now();
+    }
+
 }

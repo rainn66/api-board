@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class TokenRequestFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -28,7 +28,7 @@ public class TokenRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if ("/user/login".equals(request.getRequestURI()) || "/bbs".equals(request.getRequestURI())) {
+            if ("/user/login".equals(request.getRequestURI()) || "/board".equals(request.getRequestURI())) {
                 doFilter(request, response, filterChain);
             } else {
                 String token = parseJwt(request);

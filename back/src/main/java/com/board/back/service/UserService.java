@@ -1,13 +1,12 @@
 package com.board.back.service;
 
-import com.board.back.domain.UserEntity;
+import com.board.back.entity.Users;
 import com.board.back.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,13 +25,13 @@ public class UserService implements UserDetailsService {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        UserEntity userEntity = userRepository.findByUserId(userId)
+        Users usersEntity = userRepository.findByUserId(userId)
             .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-        if (userEntity.getUserId().equals(userId)) {
+        if (usersEntity.getUserId().equals(userId)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
 
-        return new User(userEntity.getUserId(), userEntity.getUserPassword(), authorities);
+        return new User(usersEntity.getUserId(), usersEntity.getPassword(), authorities);
     }
 }

@@ -37,6 +37,7 @@ public class UserController {
             new UsernamePasswordAuthenticationToken(loginUser, userPassword)
         );
 
+
         SecurityContextHolder.getContext().setAuthentication(authentication);   // 검증 통과 후 authentication 세팅
 
         String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());     //accessToken 생성

@@ -1,30 +1,30 @@
-package com.board.back.domain;
+package com.board.back.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Table(name="bbs_file")
-public class BbsFileEntity {
+@Getter
+public class BoardFile {
 
     @Id
     @GeneratedValue
-    @Column(name = "bbs_file_idx")
-    private Long bbsFileIdx;
+    @Column(name = "board_file_idx")
+    private Long boardFileIdx;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bbs_idx")
-    private BbsMainEntity bbsMainEntity;
+    @JoinColumn(name = "board_idx")
+    private Board board;
 
     private String fileOrgNm;
 
     private String fileSaveNm;
 
-    private String delYn;
+    private String fileSavePath;
 }

@@ -9,6 +9,6 @@ import store from './vuex/store'
 
 const app = createApp(App)
 app.config.globalProperties.$axios = axios;
-app.config.globalProperties.$serverUrl = '//localhost:80'
+app.config.globalProperties.$serverUrl = '//localhost:8080'
 app.config.globalProperties.$store = store;
 app.use(router).use(store).mount('#app')
