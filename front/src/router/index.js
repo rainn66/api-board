@@ -35,12 +35,12 @@ const routes = [
 		component: () => import('../views/AppAbout.vue')
 	},
 	{
-		path: '/bbsMainList',
+		path: '/board',
 		name: 'BoardList',
 		component: BoardList
 	},
 	{
-		path: '/bbsMainInfo',
+		path: '/board',
 		name: 'BoardForm',
 		component: BoardForm,
 		beforeEnter: requireAuth()

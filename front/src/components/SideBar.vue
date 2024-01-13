@@ -6,11 +6,11 @@
                 <br>
                 <router-link to="/about">About</router-link>
                 <br>
-                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0001'}}">Notice Board</router-link>
+                <router-link :to="{name:'BoardList', query:{boardMainIdx:'1'}}">Notice Board</router-link>
                 <br>
-                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0002'}}">Data Board</router-link>
+                <router-link :to="{name:'BoardList', query:{boardMainIdx:'2'}}">Data Board</router-link>
                 <br>
-                <router-link :to="{name:'BoardList', query:{bbsCategoryCd:'B0003'}}">Diary Board</router-link>
+                <router-link :to="{name:'BoardList', query:{boardMainIdx:'3'}}">Diary Board</router-link>
             </div>
         </VueResizable>
         <button class="side-bar-active-btn" @click="showSideBar">

@@ -4,11 +4,11 @@
             <select class="w3-select w3-border" style="margin-right:20px;float:left;height:50px;width:20%;min-width:100px;" v-model="searchKey">
                 <option value="">선택</option>
                 <option value="regUserId">작성자</option>
-                <option value="bbsTitle">제목</option>
-                <option value="bbsContents">내용</option>
+                <option value="boardTitle">제목</option>
+                <option value="boardContent">내용</option>
             </select>
             <input class="w3-input w3-border" type="text" style="height:50px;width:50%;min-width:200px;" v-model="searchVal" @keyup.enter="fnGetList();"/>
-            <input type="hidden" v-model="bbsCategoryCd" />
+            <input type="hidden" v-model="boardMainIdx" />
         </div>
         <div class="common-buttons">
             <button class="w3-button w3-round w3-blue-gray" @click="fnGetList();">검색</button>&nbsp;
@@ -35,7 +35,7 @@
             </tr>
             <tr v-for="(row, idx) in list" :key="idx">
                 <td>{{ idx + 1 }}</td>
-                <td><a v-on:click="fnGoForm(`${row.bbsIdx}`)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.bbsTitle }}</a></td>
+                <td><a v-on:click="fnGoForm(`${row.boardIdx}`)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.boardTitle }}</a></td>
                 <td>{{ row.regUserId }}</td>
                 <td>{{ row.regDt }}</td>
             </tr>
@@ -67,7 +67,7 @@ export default {
     data() {
         return {
             requestBody: {},
-            list: {bbsIdx: '', bbsTitle: '', regUserId:'', regDt: ''},
+            list: {boardIdx: '', boardTitle: '', regUserId:'', regDt: ''},
             no: '',
             paging: {
                 block: 0,
@@ -87,7 +87,7 @@ export default {
             size: this.$route.query.size ? this.$route.query.size : 10,
             searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
             searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
-            bbsCategoryCd: this.$route.query.bbsCategoryCd ? this.$route.query.bbsCategoryCd : 'B0001',
+            boardMainIdx: this.$route.query.boardMainIdx ? this.$route.query.boardMainIdx : '1',
             pageNavigator: function () { //페이징 처리 for문 커스텀
                 let pageNumber = [] //;
                 let start_page = this.paging.startPage;
@@ -109,20 +109,22 @@ export default {
             this.requestBody = {
                 page: pageNum
                 , size: this.size
-                , bbsCategoryCd: this.bbsCategoryCd
+                , boardMainIdx: this.boardMainIdx
                 , searchKey: this.searchKey
                 , searchVal: this.searchVal
             }
-            this.$axios.get(this.$serverUrl + '/bbsMainList', {
+            this.$axios.get(this.$serverUrl + '/board', {
                 params: this.requestBody,
                 headers: {}
             }).then((res) => {
-                if (res.data.resultCode === "OK") {
-                    //console.log(res.data);
-                    this.list = res.data.data;
-                    this.paging = res.data.pagination;
-                    this.no = this.paging.totalListCnt - ((this.paging.page - 1) * this.paging.pageSize);
-                }
+                console.log(res);
+                this.list = res.data.content;
+                // if (res.data.resultCode === "OK") {
+                //     //console.log(res.data);
+                //
+                //     this.paging = res.data.pagination;
+                //     this.no = this.paging.totalListCnt - ((this.paging.page - 1) * this.paging.pageSize);
+                // }
             }).catch((err) => {
                 console.log(err.message);
             })
@@ -131,7 +133,7 @@ export default {
             //console.log(bbsIdx);
             this.requestBody.bbsIdx = bbsIdx
             this.$router.push({
-                path: '/bbsMainInfo',
+                name: 'BoardForm',
                 query: this.requestBody
             })
         }

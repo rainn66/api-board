@@ -12,7 +12,7 @@
                     </p>
                     <p>
                         <button type="submit" class="w3-button w3-green w3-round">Login</button>
-                        <button @click="fnGoSignUp" type="button" class="w3-button w3-green w3-round">Sign Up</button>
+                        <button @click="fnGoSignUp" type="button" class="w3-button w3-green w3-round" style="margin-left:30px;">Sign Up</button>
                     </p>
                 </form>
             </div>
