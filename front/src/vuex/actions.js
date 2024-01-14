@@ -28,8 +28,8 @@ let processResponse = (store, loginResponse) => {
 }
 
 export default {
-	async login (store, {userId, userPassword}) {
-		let loginResponse = await loginAPI.doLogin(userId, userPassword)
+	async login (store, {userId, password}) {
+		let loginResponse = await loginAPI.doLogin(userId, password)
 		processResponse(store, loginResponse)
 		return store.getters.getIsAuth  // 로그인 결과를 리턴한다
 	}

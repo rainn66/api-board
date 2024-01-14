@@ -41,21 +41,21 @@
             </tr>
             </tbody>
         </table>
-        <div class="pagination w3-bar w3-padding-16 w3-small" v-if="paging.totalListCnt > 0">
+        <div class="pagination w3-bar w3-padding-16 w3-small" v-if="totalPages > 0">
             <span class="pg">
                 <a href="javascript:" @click="fnGetList(1)" class="first w3-button">&lt;&lt;</a>
-                <a href="javascript:" v-if="paging.startPage > 10" @click="fnGetList(`${paging.startPage-1}`)"
+                <a href="javascript:" v-if="paging.pageNumber > 0" @click="fnGetList(`${paging.pageNumber-1}`)"
                 class="prev w3-button w3-border">&lt;</a>
                 <template v-for="(n,index) in pageNavigator()">
-                    <template v-if="paging.page===n">
-                        <strong class="w3-button w3-green" :key="index">{{ n }}</strong>
+                    <template v-if="paging.pageNumber===n">
+                        <strong class="w3-button w3-green" :key="index">{{ n + 1 }}</strong>
                     </template>
                     <template v-else>
-                        <a class="w3-button " href="javascript:;" @click="fnGetList(`${n}`)" :key="index">{{ n }}</a>
+                        <a class="w3-button " href="javascript:;" @click="fnGetList(`${n + 1}`)" :key="index">{{ n + 1 }}</a>
                     </template>
                 </template>
-                <a href="javascript:" v-if="paging.totalPageCnt > paging.endPage" @click="fnGetList(`${paging.endPage+1}`)" class="next w3-button w3-border">&gt;</a>
-                <a href="javascript:" @click="fnGetList(`${paging.totalPageCnt}`)" class="last w3-button">&gt;&gt;</a>
+                <a href="javascript:" v-if="totalPages-1 > paging.pageNumber" @click="fnGetList(`${paging.pageNumber+1}`)" class="next w3-button w3-border">&gt;</a>
+                <a href="javascript:" @click="fnGetList(`${totalPages}`)" class="last w3-button">&gt;&gt;</a>
             </span>
         </div>
     </div>
@@ -70,41 +70,32 @@ export default {
             list: {boardIdx: '', boardTitle: '', regUserId:'', regDt: ''},
             no: '',
             paging: {
-                block: 0,
-                endPage: 0,
-                nextBlock: 0,
-                page: 0,
-                pageSize: 0,
-                prevBlock: 0,
-                startIndex: 0,
-                startPage: 0,
-                totalBlockCnt: 0,
-                totalListCnt: 0,
-                totalPageCnt: 0,
-                pagination: 0
-            }, //페이징 데이터
-            page: this.$route.query.page ? this.$route.query.page : 1,
-            size: this.$route.query.size ? this.$route.query.size : 10,
+                pageNumber:0,
+                offset:0,
+                pageSize:10,
+            },
+            totalPages:0,
+            totalElements:0,
             searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
             searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
             boardMainIdx: this.$route.query.boardMainIdx ? this.$route.query.boardMainIdx : '1',
-            pageNavigator: function () { //페이징 처리 for문 커스텀
-                let pageNumber = [] //;
-                let start_page = this.paging.startPage;
-                let end_page = this.paging.endPage;
-                for (let i = start_page; i <= end_page; i++) pageNumber.push(i);
+            pageNavigator: function () { //페이징 처리
+                let pageNumber = [];
+                let start_page = 0;
+                let end_page = this.totalPages;
+                for (let i = start_page; i < end_page; i++) pageNumber.push(i);
                 return pageNumber;
             }
         }
     },
     mounted() {
-        this.fnGetList()
+        this.fnGetList();
     },
     methods: {
         fnGetList(pageNum) {
 
             if (pageNum === undefined) {
-                pageNum = 1;
+                pageNum = 0;
             }
             this.requestBody = {
                 page: pageNum
@@ -117,21 +108,16 @@ export default {
                 params: this.requestBody,
                 headers: {}
             }).then((res) => {
-                console.log(res);
                 this.list = res.data.content;
-                // if (res.data.resultCode === "OK") {
-                //     //console.log(res.data);
-                //
-                //     this.paging = res.data.pagination;
-                //     this.no = this.paging.totalListCnt - ((this.paging.page - 1) * this.paging.pageSize);
-                // }
+                this.paging = res.data.pageable;
+                this.totalPages = res.data.totalPages;
             }).catch((err) => {
                 console.log(err.message);
-            })
+            });
         },
-        fnGoForm(bbsIdx) {
+        fnGoForm(boardIdx) {
             //console.log(bbsIdx);
-            this.requestBody.bbsIdx = bbsIdx
+            this.requestBody.boardIdx = boardIdx;
             this.$router.push({
                 name: 'BoardForm',
                 query: this.requestBody

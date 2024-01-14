@@ -6,5 +6,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BoardRepositoryCustom {
-    Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, String bbsCategoryCd);
+    Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, Long boardMainIdx);
 }

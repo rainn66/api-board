@@ -28,7 +28,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, String bbsCategoryCd) {
+    public Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, Long boardMainIdx) {
 
         List<BoardDto> result = jpaQueryFactory
                 .select(new QBoardDto(
@@ -43,9 +43,11 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 )
                 .from(board)
                 .leftJoin(board.boardMain, boardMain)
-                .where(bbsTitleEq(condition.getBbsTitle()),
+                .where(boardTitleEq(condition.getBoardTitle()),
+                        boardContentEq(condition.getBoardContent()),
                         regUserIdEq(condition.getRegUserId()),
-                        board.delYn.eq("N"))
+                        board.delYn.eq( "N"),
+                        boardMain.boardMainIdx.eq(boardMainIdx))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -54,19 +56,26 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .select(board.count())
                 .from(board)
                 .leftJoin(board.boardMain, boardMain)
-                .where(bbsTitleEq(condition.getBbsTitle()),
-                        regUserIdEq(condition.getRegUserId()))
+                .where(boardTitleEq(condition.getBoardTitle()),
+                        boardContentEq(condition.getBoardContent()),
+                        regUserIdEq(condition.getRegUserId()),
+                        board.delYn.eq( "N"),
+                        boardMain.boardMainIdx.eq(boardMainIdx))
                 .fetchOne();
 
         return new PageImpl<>(result, pageable, total);
     }
 
-    private Predicate bbsTitleEq(String bbsTitle) {
-        return StringUtils.hasText(bbsTitle) ? board.boardTitle.eq(bbsTitle) : null;
+    private Predicate boardTitleEq(String boardTitle) {
+        return StringUtils.hasText(boardTitle) ? board.boardTitle.contains(boardTitle) : null;
+    }
+
+    private Predicate boardContentEq(String boardContent) {
+        return StringUtils.hasText(boardContent) ? board.boardContent.contains(boardContent) : null;
     }
 
     private Predicate regUserIdEq(String regUserId) {
-        return StringUtils.hasText(regUserId) ? board.regUserId.eq(regUserId) : null;
+        return StringUtils.hasText(regUserId) ? board.regUserId.contains(regUserId) : null;
     }
 
 

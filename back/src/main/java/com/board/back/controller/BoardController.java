@@ -22,29 +22,30 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin
 @RestController
+@RequestMapping("/board")
 public class BoardController {
     private final UserService userService;
     private final BoardService boardService;
     private final JwtUtil jwtUtil;
     private final TokenRequestFilter tokenRequestFilter;
 
-    @GetMapping("/board")
+    @GetMapping
     public Page<BoardDto> boardList(Pageable pageable,
                                     BoardSearchCondition searchCondition,
-                                    @RequestParam(value = "boardMainIdx", required = true) String boardMainIdx) {
+                                    @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) {
         return boardService.getBoardList(pageable, searchCondition, boardMainIdx);
     }
 
-    @GetMapping("/board/{boardIdx}")
-    public BoardDto boardInfo(@PathVariable Long boardIdx) {
+    @GetMapping("/{boardIdx}")
+    public BoardDto boardInfo(@PathVariable Long boardIdx, HttpServletRequest request) {
         return boardService.getBoardInfo(boardIdx);
     }
 
 
-    @PostMapping("/board/Exec")
+    @PostMapping("/Exec")
     public ResponseEntity<Map<String, Object>> boardExec(@RequestParam String mode,
-                              @RequestBody BoardDto boardDto,
-                              HttpServletRequest request) {
+                                                         @RequestBody BoardDto boardDto,
+                                                         HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>();
 
         //token 작성자 확인
@@ -57,17 +58,22 @@ public class BoardController {
         if ("R".equals(mode)) {
             boardService.regBoardInfo(boardDto);
         } else if ("U".equals(mode)) {
-            if (checkUserAuth(boardDto, result, userInfo)) return ResponseEntity.ok(result);
+            if (checkUserAuth(boardDto.getRegUserId(), result, userInfo)) {
+                return ResponseEntity.ok(result);
+            }
             boardService.modBoardInfo(boardDto);
         } else {
-            if (checkUserAuth(boardDto, result, userInfo)) return ResponseEntity.ok(result);
+            if (checkUserAuth(boardDto.getRegUserId(), result, userInfo)) {
+                return ResponseEntity.ok(result);
+            }
             boardService.delBoardInfo(boardDto);
         }
         return ResponseEntity.ok(result);
     }
 
-    private boolean checkUserAuth(@RequestBody BoardDto boardDto, Map<String, Object> result, UserDetails userInfo) {
-        if (!userInfo.getUsername().equals(boardDto.getRegUserId())) {
+    private boolean checkUserAuth(String userId, Map<String, Object> result, UserDetails userInfo) {
+        //UserDetails.getUsername == userId
+        if (!userInfo.getUsername().equals(userId)) {
             result.put("resultCd", "FAIL");
             result.put("msg", "글 수정 권한이 없습니다.");
             return true;

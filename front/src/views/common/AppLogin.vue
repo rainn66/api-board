@@ -8,7 +8,7 @@
                         <input style="width:30%;min-width:200px;" name="userId" placeholder="Enter your ID" v-model="userId"><br>
                     </p>
                     <p>
-                        <input style="width:30%;min-width:200px;" name="userPassword" placeholder="Enter your password" v-model="userPassword" type="password">
+                        <input style="width:30%;min-width:200px;" name="password" placeholder="Enter your password" v-model="password" type="password">
                     </p>
                     <p>
                         <button type="submit" class="w3-button w3-green w3-round">Login</button>
@@ -27,7 +27,7 @@ export default {
     data() {
         return {
             userId: '',
-            userPassword: ''
+            password: ''
         }
     },
     methods: {
@@ -38,12 +38,12 @@ export default {
                 alert('ID를 입력하세요.');
                 return;
             }
-            if (this.userPassword === '') {
+            if (this.password === '') {
                 alert('비밀번호를 입력하세요.');
                 return;
             }
             try {
-                let loginResult = await this.login({userId: this.userId, userPassword:this.userPassword});
+                let loginResult = await this.login({userId: this.userId, password:this.password});
                 if (loginResult) {
                     this.$store.state.isLogin=true;
                     this.fnGoHome();

@@ -25,7 +25,7 @@ public class BoardService {
     /**
      * 게시글 목록
      */
-    public Page<BoardDto> getBoardList(Pageable pageable, BoardSearchCondition searchCondition, String boardMainIdx) {
+    public Page<BoardDto> getBoardList(Pageable pageable, BoardSearchCondition searchCondition, Long boardMainIdx) {
         return boardRepository.search(searchCondition, pageable, boardMainIdx);
     }
 

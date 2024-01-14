@@ -15,6 +15,9 @@
         <div class="board-contents">
             <input type="text" v-model="regUserId" class="w3-input w3-border" placeholder="자동 등록 항목입니다." readonly>
         </div>
+        <div class="board-contents">
+            <input type="text" v-model="regDt" class="w3-input w3-border" placeholder="자동 등록 항목입니다." readonly>
+        </div>
         <input type="hidden" v-model="boardIdx" />
     </div>
 </template>
@@ -32,30 +35,30 @@ export default {
         }
     },
     mounted() {
-        this.fnGetForm()
+        this.fnGetForm();
     },
     methods: {
         fnGetForm() {
             if (this.boardIdx !== undefined) {
-                this.$axios.get(this.$serverUrl + '/board/' + this.boardIdx, {
-                    params: this.requestBody
-                }).then((res) => {
-                    this.boardIdx = res.data.boardIdx
-                    this.boardTitle = res.data.boardTitle
-                    this.boardContent = res.data.boardContent
-                    this.regDt = res.data.regDt
-                    this.regUserId = res.data.regUserId
+                this.$axios.get(this.$serverUrl + '/board/' + this.boardIdx).then((res) => {
+                    this.boardIdx = res.data.boardIdx;
+                    this.boardTitle = res.data.boardTitle;
+                    this.boardContent = res.data.boardContent;
+                    this.topFixyn = res.data.topFixyn;
+                    this.delYn = res.data.delYn;
+                    this.regDt = res.data.regDt;
+                    this.regUserId = res.data.regUserId;
                 }).catch((err) => {
-                    console.log(err)
-                })
+                    console.log(err);
+                });
             }
         },
         fnGoList() {
-            delete this.requestBody.boardIdx
+            delete this.requestBody.boardIdx;
             this.$router.push({
                 path: '/board',
                 query: this.requestBody
-            })
+            });
         },
         fnSaveForm(mode) {
             var message = "";
@@ -72,19 +75,21 @@ export default {
 
             if (confirm(message + "하시겠습니까?")) {
                 this.form = {
-                    "boardIdx": this.boardIdx
-                    , "boardMainIdx": this.boardMainIdx
-                    , "boardTitle": this.boardTitle
-                    , "boardContent": this.boardContent
-                    , "topFixYn": "N"
-                    , "regUserId": this.regUserId
-                    , "chgUserId": this.regUserId
-                    , "mode": mode
+                    "boardIdx": this.boardIdx,
+                    "boardMainIdx": this.boardMainIdx,
+                    "boardTitle": this.boardTitle,
+                    "boardContent": this.boardContent,
+                    "topFixYn": "N",
+                    "regUserId": this.regUserId
                 }
-
                 this.$axios.post(
-                    this.$serverUrl + '/board/Exec/' + mode
-                    , this.form
+                    this.$serverUrl + '/board/Exec?' + "mode=" + mode
+                    , JSON.stringify(this.form)
+                    , {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
                 ).then((res) => {
                     console.log(res);
                     if (res.data.resultCd === "FAIL") {

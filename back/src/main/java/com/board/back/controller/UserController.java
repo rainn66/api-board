@@ -29,22 +29,25 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> paramMap) {
         String userId = paramMap.get("userId");
-        String userPassword = paramMap.get("userPassword");
+        String password = paramMap.get("password");
 
-        UserDetails loginUser = userService.loadUserByUsername(userId); //userId로 정보 가져오기
+        //회원 조회
+        UserDetails loginUser = userService.loadUserByUsername(userId);
 
-        Authentication authentication = authenticationManager.authenticate(     //가져온 정보와 입력한 비밀번호로 검증
-            new UsernamePasswordAuthenticationToken(loginUser, userPassword)
+        //가져온 정보와 입력한 비밀번호로 검증
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginUser, password)
         );
 
+        //인증값 세팅
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);   // 검증 통과 후 authentication 세팅
-
-        String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());     //accessToken 생성
+        //accessToken 생성
+        String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());
 
         Map<String, Object> result = new HashMap<>();
         result.put("userId", loginUser.getUsername());
-        result.put("userToken", accessToken);
+        result.put("userToken", accessToken);//회원 접속 고유 token
         result.put("userRole", loginUser.getAuthorities().stream().findFirst().get().getAuthority());
 
         return ResponseEntity.ok(result);

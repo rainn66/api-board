@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,16 +23,23 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class TokenRequestFilter extends OncePerRequestFilter {
+
+    private static final String[] notFilteringList = {"/", "/board", "/user/login", "/css/*", "/*.ico", "/board/Exec"};
+
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+
         try {
-            if ("/user/login".equals(request.getRequestURI()) || "/board".equals(request.getRequestURI())) {
+            if (PatternMatchUtils.simpleMatch(notFilteringList, requestURI)) {
                 doFilter(request, response, filterChain);
             } else {
                 String token = parseJwt(request);
+                log.info("token {}", token);
                 if (token == null) {
                     response.sendError(403);    //accessDenied
                 } else {

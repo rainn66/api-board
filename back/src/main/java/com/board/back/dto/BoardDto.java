@@ -3,11 +3,13 @@ package com.board.back.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@ToString
 public class BoardDto {
 
     private Long boardIdx;

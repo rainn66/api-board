@@ -18,11 +18,14 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     String secret;
 
+    @Value("${jwt.issuer}")
+    String issuer;
+
     public String createJwt(String userId, String userNm){
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         return JWT.create()
-            .withIssuer("js.lee")
+            .withIssuer(issuer)
             .withClaim("userId", userId)
             .withClaim("userNm", userNm)
             .withIssuedAt(new Date())
@@ -33,7 +36,7 @@ public class JwtUtil {
     public DecodedJWT decodeJwt(String jwt) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm).withIssuer("js.lee").build();
+            JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer).build();
             return verifier.verify(jwt);
         } catch (JWTVerificationException e) {
             log.error("JWTVerificationException: {}", e.getMessage());

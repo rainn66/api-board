@@ -1,32 +1,24 @@
 import axios from 'axios'
 
-const getUserInfo = (userId, userPassword) => {
+const getUserInfo = (userId, password) => {
 	const reqData = {
 		'userId': userId,
-		'userPassword': userPassword
+		'password': password
 	}
 
-	let serverUrl = '//localhost:800'
+	let serverUrl = '//localhost:8080'
 
 	return axios.post(serverUrl + '/user/login', reqData, {
 		headers: {
 			'Content-type': 'application/json'
 		}
 	})
-
-	// return {
-	// 	'data': {
-	// 		'userId': reqData.userId,
-	// 		'userToken': 'user_test_token',
-	// 		'userRole': 'ADM'
-	// 	}
-	// }
 }
 
 export default {
-	async doLogin(userId, userPassword) {
+	async doLogin(userId, password) {
 		try {
-			const getUserInfoPromise = getUserInfo(userId, userPassword)
+			const getUserInfoPromise = getUserInfo(userId, password)
 			const [userInfoResponse] = await Promise.all([getUserInfoPromise])
 			if (userInfoResponse.data.length === 0) {
 				return 'notFound'

@@ -1,20 +1,22 @@
 package com.board.back.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name="users")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Users extends BaseEntity{
 
     @Id
     @GeneratedValue
     @Column(name = "user_idx")
-    private String userIdx;
+    private Long userIdx;
 
     @Column(name = "user_id")
     private String userId;
@@ -23,15 +25,5 @@ public class Users extends BaseEntity{
 
     private String password;
 
-    private String lastLoginDt;
-
-    public Users() {
-    }
-
-    public Users(String userId, String userNm, String password, String lastLoginDt) {
-        this.userId = userId;
-        this.userNm = userNm;
-        this.password = password;
-        this.lastLoginDt = lastLoginDt;
-    }
+    private LocalDateTime lastLoginDt;
 }
