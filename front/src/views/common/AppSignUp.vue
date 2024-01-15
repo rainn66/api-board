@@ -42,7 +42,6 @@ export default {
                 alert("비밀번호가 일치하지 않습니다.");
                 return;
             }
-            console.log(this.password, this.passwordChk);
             this.form = {
                 "userId": this.userId,
                 "userNm": this.userNm,

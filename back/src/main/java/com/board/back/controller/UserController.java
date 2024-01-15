@@ -66,7 +66,8 @@ public class UserController {
         } else {
             result.put("resultCd", "FAIL");
             result.put("msg", "이미 등록된 ID 입니다.");
+            //return ResponseEntity.ofNullable(result);
         }
-        return ResponseEntity.ofNullable(result);
+        return ResponseEntity.ok(result);
     }
 }
