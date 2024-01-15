@@ -17,20 +17,20 @@ let setIsAuth = ({commit}, data) => {
 let processResponse = (store, loginResponse) => {
 	switch (loginResponse) {
 		case 'notFound':
-			setErrorState(store, 'Wrong ID or Password')
-			setIsAuth(store, false)
-			break
+			setErrorState(store, 'Wrong ID or Password');
+			setIsAuth(store, false);
+			break;
 		default:
-			setUserId(store, loginResponse.userId)
-			setErrorState(store, '')
-			setIsAuth(store, true)
+			setUserId(store, loginResponse.userId);
+			setErrorState(store, '');
+			setIsAuth(store, true);
 	}
 }
 
 export default {
 	async login (store, {userId, password}) {
-		let loginResponse = await loginAPI.doLogin(userId, password)
-		processResponse(store, loginResponse)
-		return store.getters.getIsAuth  // 로그인 결과를 리턴한다
+		let loginResponse = await loginAPI.doLogin(userId, password);
+		processResponse(store, loginResponse);
+		return store.getters.getIsAuth;  // 로그인 결과를 리턴한다
 	}
 }

@@ -39,7 +39,7 @@ export default {
     },
     methods: {
         fnGetForm() {
-            if (this.boardIdx !== undefined) {
+            if (this.boardIdx !== undefined && this.boardIdx !== '') {
                 this.$axios.get(this.$serverUrl + '/board/' + this.boardIdx).then((res) => {
                     this.boardIdx = res.data.boardIdx;
                     this.boardTitle = res.data.boardTitle;
@@ -51,6 +51,8 @@ export default {
                 }).catch((err) => {
                     console.log(err);
                 });
+            } else {
+                console.log("등록");
             }
         },
         fnGoList() {
@@ -62,6 +64,7 @@ export default {
         },
         fnSaveForm(mode) {
             var message = "";
+            var delYn = "N";
             if (mode === undefined) {
                 if (this.boardIdx === undefined || this.boardIdx === '') {
                     mode = 'R';
@@ -71,6 +74,7 @@ export default {
                 message = "저장";
             } else {
                 message = "삭제";
+                delYn = "Y";
             }
 
             if (confirm(message + "하시겠습니까?")) {
@@ -80,6 +84,7 @@ export default {
                     "boardTitle": this.boardTitle,
                     "boardContent": this.boardContent,
                     "topFixYn": "N",
+                    "delYn": delYn,
                     "regUserId": this.regUserId
                 }
                 this.$axios.post(

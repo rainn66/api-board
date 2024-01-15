@@ -52,7 +52,7 @@ public class BoardService {
                 .boardTitle(boardDto.getBoardTitle())
                 .boardContent(boardDto.getBoardContent())
                 .topFixYn(boardDto.getTopFixYn())
-                .delYn(boardDto.getDelYn())
+                .delYn("N")
                 .build();
         boardRepository.save(board);
     }
@@ -60,6 +60,7 @@ public class BoardService {
     /**
      * 게시글 수정
      */
+    @Transactional //영속성컨텍스트 트랜잭션 내부에서만 동작(변경감지)
     public void modBoardInfo(BoardDto boardDto) {
         Board findBoard = boardRepository.findByBoardIdx(boardDto.getBoardIdx());
         findBoard.update(boardDto.getBoardTitle(), boardDto.getBoardContent(), boardDto.getTopFixYn(), boardDto.getDelYn());
@@ -69,6 +70,7 @@ public class BoardService {
     /**
      * 게시글 삭제
      */
+    @Transactional
     public void delBoardInfo(BoardDto boardDto) {
         Board findBoard = boardRepository.findByBoardIdx(boardDto.getBoardIdx());
         findBoard.delete(boardDto.getDelYn());

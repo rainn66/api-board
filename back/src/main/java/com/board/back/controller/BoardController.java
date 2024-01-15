@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/board")
 public class BoardController {
-    private final UserService userService;
     private final BoardService boardService;
     private final JwtUtil jwtUtil;
     private final TokenRequestFilter tokenRequestFilter;
@@ -50,30 +50,34 @@ public class BoardController {
 
         //token 작성자 확인
         String jwtToken = tokenRequestFilter.parseJwt(request);
-        String userId = jwtUtil.getUserFromToken(jwtToken);
-        UserDetails userInfo = userService.loadUserByUsername(userId);
+        String tokenUserId = jwtUtil.getUserFromToken(jwtToken);
+
+        //UserDetails userInfo = userService.loadUserByUsername(userId);
+        //security 에 세팅된 회원명
+        //String securityUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
         //검증
 
         //서비스
         if ("R".equals(mode)) {
             boardService.regBoardInfo(boardDto);
         } else if ("U".equals(mode)) {
-            if (checkUserAuth(boardDto.getRegUserId(), result, userInfo)) {
-                return ResponseEntity.ok(result);
+            if (checkUserAuth(boardDto.getRegUserId(), tokenUserId, result)) {
+                return ResponseEntity.ofNullable(result);
             }
             boardService.modBoardInfo(boardDto);
         } else {
-            if (checkUserAuth(boardDto.getRegUserId(), result, userInfo)) {
-                return ResponseEntity.ok(result);
+            if (checkUserAuth(boardDto.getRegUserId(), tokenUserId, result)) {
+                return ResponseEntity.ofNullable(result);
             }
             boardService.delBoardInfo(boardDto);
         }
         return ResponseEntity.ok(result);
     }
 
-    private boolean checkUserAuth(String userId, Map<String, Object> result, UserDetails userInfo) {
+    private boolean checkUserAuth(String userId, String tokenUserId, Map<String, Object> result) {
         //UserDetails.getUsername == userId
-        if (!userInfo.getUsername().equals(userId)) {
+        if (!tokenUserId.equals(userId)) {
             result.put("resultCd", "FAIL");
             result.put("msg", "글 수정 권한이 없습니다.");
             return true;

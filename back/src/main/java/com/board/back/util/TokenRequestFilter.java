@@ -24,7 +24,7 @@ import java.io.IOException;
 @Component
 public class TokenRequestFilter extends OncePerRequestFilter {
 
-    private static final String[] notFilteringList = {"/", "/board", "/user/login", "/css/*", "/*.ico", "/board/Exec"};
+    private static final String[] notFilteringList = {"/", "/board", "/user/login", "/css/*", "/*.ico", "/user/signup"};
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -41,7 +41,8 @@ public class TokenRequestFilter extends OncePerRequestFilter {
                 String token = parseJwt(request);
                 log.info("token {}", token);
                 if (token == null) {
-                    response.sendError(403);    //accessDenied
+                    //accessDenied
+                    response.sendError(403);
                 } else {
                     DecodedJWT tokenInfo = jwtUtil.decodeJwt(token);
                     if (tokenInfo != null) {
@@ -52,6 +53,7 @@ public class TokenRequestFilter extends OncePerRequestFilter {
                         );
 
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        //log.info("TokenRequestFilter.authentication {}", authentication);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                         doFilter(request, response, filterChain);
 
@@ -61,6 +63,7 @@ public class TokenRequestFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("### Filter Exception {}", e.getMessage());
         }
     }

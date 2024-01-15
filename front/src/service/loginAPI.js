@@ -5,14 +5,12 @@ const getUserInfo = (userId, password) => {
 		'userId': userId,
 		'password': password
 	}
-
-	let serverUrl = '//localhost:8080'
-
-	return axios.post(serverUrl + '/user/login', reqData, {
+	var serverUrl = '//localhost:8080';
+	return axios.post( serverUrl + '/user/login', JSON.stringify(reqData), {
 		headers: {
 			'Content-type': 'application/json'
 		}
-	})
+	});
 }
 
 export default {
@@ -28,7 +26,8 @@ export default {
 				return userInfoResponse
 			}
 		} catch (err) {
-			console.error(err)
+			console.error(err);
 		}
 	}
 }
+

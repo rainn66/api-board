@@ -23,6 +23,14 @@ export default {
     }
 }
 
+//브라우저 종료시 회원정보 제거
+window.addEventListener("unload", deleteToken)
+function deleteToken() {
+    localStorage.removeItem("payload")
+    localStorage.removeItem("userToken")
+    localStorage.removeItem("refresh")
+}
+
 // window.onload = function() {
 //     console.log("");
 //     console.log("[header]")

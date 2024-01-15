@@ -1,5 +1,6 @@
 package com.board.back.controller;
 
+import com.board.back.dto.UserDto;
 import com.board.back.service.UserService;
 import com.board.back.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -36,10 +38,10 @@ public class UserController {
 
         //가져온 정보와 입력한 비밀번호로 검증
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginUser, password)
+                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), password)
         );
 
-        //인증값 세팅
+        //스프링 시큐리티에 인증값 세팅
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         //accessToken 생성
@@ -51,5 +53,20 @@ public class UserController {
         result.put("userRole", loginUser.getAuthorities().stream().findFirst().get().getAuthority());
 
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, Object>> signup(@RequestBody UserDto userDto) {
+
+        Map<String, Object> result = new HashMap<>();
+        if (userService.validateDuplicateUsers(userDto)) {
+            userService.signUp(userDto);
+            result.put("userNm", String.valueOf(userDto.getUserNm()));
+            result.put("resultCd", "SUCCESS");
+        } else {
+            result.put("resultCd", "FAIL");
+            result.put("msg", "이미 등록된 ID 입니다.");
+        }
+        return ResponseEntity.ofNullable(result);
     }
 }

@@ -26,4 +26,5 @@ public class Users extends BaseEntity{
     private String password;
 
     private LocalDateTime lastLoginDt;
+
 }

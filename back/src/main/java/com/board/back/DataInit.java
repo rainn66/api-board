@@ -28,7 +28,7 @@ public class DataInit {
     @PostConstruct
     public void init() {
 
-        BoardMain boardMain = new BoardMain("자유게시판", "Y");
+        /*BoardMain boardMain = new BoardMain("자유게시판", "Y");
         BoardMain savedBoardMain = boardMainRepository.save(boardMain);
 
         BoardMain findBoardMain = boardMainRepository.findByBoardMainIdx(savedBoardMain.getBoardMainIdx());
@@ -51,7 +51,7 @@ public class DataInit {
                 .lastLoginDt(LocalDateTime.now())
                 .build();
 
-        userRepository.save(userEntity);
+        userRepository.save(userEntity);*/
     }
 
 

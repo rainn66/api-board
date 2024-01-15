@@ -31,16 +31,4 @@ public class BaseEntity {
     @Column(name="chg_dt")
     private LocalDateTime chgDt;
 
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        regDt = now;
-        chgDt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        chgDt = LocalDateTime.now();
-    }
-
 }
