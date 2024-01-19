@@ -1,6 +1,8 @@
 import axios from 'axios';
+import store from '@/vuex/store'
 
 axios.interceptors.request.use(function (config) {
+	store.commit('LOADING_STATUS', true);
 	const token = localStorage.getItem('userToken');
 	config.headers.Authorization = "Bearer " + token;
 
@@ -8,6 +10,7 @@ axios.interceptors.request.use(function (config) {
 });
 
 axios.interceptors.response.use(function (config) {
+	store.commit('LOADING_STATUS', false);
 	return config
 });
 

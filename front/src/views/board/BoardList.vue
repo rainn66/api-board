@@ -78,7 +78,7 @@ export default {
             totalElements:0,
             searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
             searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
-            boardMainIdx: this.$route.query.boardMainIdx ? this.$route.query.boardMainIdx : '1',
+            boardMainIdx: this.$route.query.boardMainIdx ? this.$route.query.boardMainIdx : '1', //없으면 error 페이지 이동
             pageNavigator: function () { //페이징 처리
                 let pageNumber = [];
                 let start_page = 0;
@@ -112,16 +112,20 @@ export default {
                 this.paging = res.data.pageable;
                 this.totalPages = res.data.totalPages;
             }).catch((err) => {
-                console.log(err.message);
+                alert(err);
             });
         },
         fnGoForm(boardIdx) {
-            //console.log(bbsIdx);
-            this.requestBody.boardIdx = boardIdx;
+            var routerName = 'BoardAdd';
+            if (boardIdx !== undefined && boardIdx !== '') {
+                routerName = 'BoardEdit';
+                this.requestBody.boardIdx = boardIdx;
+            }
             this.$router.push({
-                name: 'BoardForm',
+                name: routerName,
                 query: this.requestBody
-            })
+            });
+
         }
     }
 }

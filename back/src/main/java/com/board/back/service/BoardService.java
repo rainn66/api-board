@@ -3,7 +3,10 @@ package com.board.back.service;
 import com.board.back.dto.BoardDto;
 import com.board.back.entity.Board;
 import com.board.back.entity.BoardMain;
-import com.board.back.model.BoardSearchCondition;
+import com.board.back.form.validation.BoardDeleteForm;
+import com.board.back.form.validation.BoardSaveForm;
+import com.board.back.form.condition.BoardSearchCondition;
+import com.board.back.form.validation.BoardUpdateForm;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,15 +46,13 @@ public class BoardService {
      * 게시글 등록
      */
     @Transactional
-    public void regBoardInfo(BoardDto boardDto) {
-
-        //임시 카테고리 고정값
-        BoardMain findBoardMain = boardMainRepository.findByBoardMainIdx(1L);
+    public void regBoardInfo(BoardSaveForm saveForm) {
+        BoardMain findBoardMain = boardMainRepository.findByBoardMainIdx(saveForm.getBoardMainIdx());
         Board board = Board.builder()
                 .boardMain(findBoardMain)
-                .boardTitle(boardDto.getBoardTitle())
-                .boardContent(boardDto.getBoardContent())
-                .topFixYn(boardDto.getTopFixYn())
+                .boardTitle(saveForm.getBoardTitle())
+                .boardContent(saveForm.getBoardContent())
+                .topFixYn(saveForm.getTopFixYn())
                 .delYn("N")
                 .build();
         boardRepository.save(board);
@@ -61,9 +62,10 @@ public class BoardService {
      * 게시글 수정
      */
     @Transactional //영속성컨텍스트 트랜잭션 내부에서만 동작(변경감지)
-    public void modBoardInfo(BoardDto boardDto) {
-        Board findBoard = boardRepository.findByBoardIdx(boardDto.getBoardIdx());
-        findBoard.update(boardDto.getBoardTitle(), boardDto.getBoardContent(), boardDto.getTopFixYn(), boardDto.getDelYn());
+    public void modBoardInfo(BoardUpdateForm updateForm) {
+        Board findBoard = boardRepository.findByBoardIdx(updateForm.getBoardIdx());
+        findBoard.update(boardMainRepository.findByBoardMainIdx(updateForm.getBoardMainIdx()),
+                updateForm.getBoardTitle(), updateForm.getBoardContent(), updateForm.getTopFixYn());
     }
 
 
@@ -71,8 +73,8 @@ public class BoardService {
      * 게시글 삭제
      */
     @Transactional
-    public void delBoardInfo(BoardDto boardDto) {
-        Board findBoard = boardRepository.findByBoardIdx(boardDto.getBoardIdx());
-        findBoard.delete(boardDto.getDelYn());
+    public void delBoardInfo(BoardDeleteForm deleteForm) {
+        Board findBoard = boardRepository.findByBoardIdx(deleteForm.getBoardIdx());
+        findBoard.delete("Y"); //update 동작(변경감지)
     }
 }

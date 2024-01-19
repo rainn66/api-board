@@ -2,15 +2,13 @@
     <div class="side-bar-wrapper">
         <VueResizable class="resizable-side-bar" style="height:100%;" :width="200" :min-width="200" :max-width="Infinity" :active="['r']">
             <div class="side-bar">
-                <router-link to="/">Home</router-link>
+                <div>
+                    <router-link to="/">Home</router-link>
+                </div>
+                <div v-for="(sideItem, idx) in sideList" :key="idx">
+                    <router-link :to="{name:'BoardList', query:{boardMainIdx:sideItem.boardMainIdx}}">{{sideItem.boardNm}}</router-link>
+                </div>
                 <br>
-                <router-link to="/about">About</router-link>
-                <br>
-                <router-link :to="{name:'BoardList', query:{boardMainIdx:'1'}}">Notice Board</router-link>
-                <br>
-                <router-link :to="{name:'BoardList', query:{boardMainIdx:'2'}}">Data Board</router-link>
-                <br>
-                <router-link :to="{name:'BoardList', query:{boardMainIdx:'3'}}">Diary Board</router-link>
             </div>
         </VueResizable>
         <button class="side-bar-active-btn" @click="showSideBar">
@@ -30,11 +28,23 @@ export default {
     data() {
         return {
             isVisibleSideBar: true
+            , sideList: {boardMainIdx:'', boardNm:''}
         }
+    },
+    mounted() {
+        this.fnGetSide();
     },
     methods: {
         showSideBar() {
             this.isVisibleSideBar = !this.isVisibleSideBar;
+        },
+        fnGetSide() {
+            this.$axios.get(this.$serverUrl + '/side'
+            ).then((res) => {
+                if (res.data.boardMainList !== null) {
+                    this.sideList = res.data.boardMainList;
+                }
+            });
         }
     }
 }

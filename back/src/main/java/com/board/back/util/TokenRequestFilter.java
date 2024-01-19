@@ -24,7 +24,7 @@ import java.io.IOException;
 @Component
 public class TokenRequestFilter extends OncePerRequestFilter {
 
-    private static final String[] notFilteringList = {"/", "/board", "/user/login", "/css/*", "/*.ico", "/user/signup"};
+    private static final String[] notFilteringList = {"/side", "/board", "/user/login", "/css/*", "/*.ico", "/user/signup"};
 
     private final UserService userService;
     private final JwtUtil jwtUtil;

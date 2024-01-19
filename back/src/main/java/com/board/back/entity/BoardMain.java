@@ -1,10 +1,8 @@
 package com.board.back.entity;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
@@ -15,12 +13,12 @@ public class BoardMain extends BaseEntity {
     @GeneratedValue
     private Long boardMainIdx;
 
-    private String boardCdNm;
+    private String boardNm;
 
     private String useYn;
 
-    public BoardMain(String boardCdNm, String useYn) {
-        this.boardCdNm = boardCdNm;
+    public BoardMain(String boardNm, String useYn) {
+        this.boardNm = boardNm;
         this.useYn = useYn;
     }
 

@@ -2,9 +2,7 @@ package com.board.back.repository.impl;
 
 import com.board.back.dto.BoardDto;
 import com.board.back.dto.QBoardDto;
-import com.board.back.entity.QBoard;
-import com.board.back.entity.QBoardMain;
-import com.board.back.model.BoardSearchCondition;
+import com.board.back.form.condition.BoardSearchCondition;
 import com.board.back.repository.BoardRepositoryCustom;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -48,6 +46,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         regUserIdEq(condition.getRegUserId()),
                         board.delYn.eq( "N"),
                         boardMain.boardMainIdx.eq(boardMainIdx))
+                .orderBy(board.boardIdx.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

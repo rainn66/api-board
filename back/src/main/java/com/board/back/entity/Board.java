@@ -1,9 +1,18 @@
 package com.board.back.entity;
 
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.web.bind.annotation.BindParam;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -29,11 +38,11 @@ public class Board extends BaseEntity {
 
     private String delYn;
 
-    public void update(String boardTitle, String boardContent, String topFixYn, String delYn) {
+    public void update(BoardMain boardMain, String boardTitle, String boardContent, String topFixYn) {
+        this.boardMain = boardMain;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.topFixYn = topFixYn;
-        this.delYn = delYn;
     }
 
     public void delete(String delYn) {

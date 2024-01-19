@@ -3,7 +3,8 @@ import AppHome from '@/views/AppHome.vue'
 import AppLogin from '@/views/common/AppLogin.vue'
 import SignUp from '@/views/common/AppSignUp.vue'
 import BoardList from '@/views/board/BoardList.vue'
-import BoardForm from '@/views/board/BoardForm.vue'
+import BoardAdd from '@/views/board/BoardAdd.vue'
+import BoardEdit from '@/views/board/BoardEdit.vue'
 import store from '@/vuex/store'
 
 const requireAuth = () => (from, to, next) => {
@@ -40,9 +41,15 @@ const routes = [
 		component: BoardList
 	},
 	{
-		path: '/board',
-		name: 'BoardForm',
-		component: BoardForm,
+		path: '/boardAdd',
+		name: 'BoardAdd',
+		component: BoardAdd,
+		beforeEnter: requireAuth()
+	},
+	{
+		path: '/boardEdit',
+		name: 'BoardEdit',
+		component: BoardEdit,
 		beforeEnter: requireAuth()
 	},
 	{

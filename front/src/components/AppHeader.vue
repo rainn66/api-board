@@ -1,8 +1,8 @@
 <template>
     <header>
         <div id="nav">
-
-            <router-link to="/login" v-if="!this.$store.state.isLogin">Login</router-link>
+            <router-link to="/login" v-if="!this.$store.state.isLogin" style="margin-right:30px;">Login</router-link>
+            <router-link to="/signUp" v-if="!this.$store.state.isLogin">SignUp</router-link>
             <a style="cursor:pointer;text-decoration:underline" v-if="this.$store.state.isLogin" @click="fnLogout()">Logout</a>
         </div>
     </header>

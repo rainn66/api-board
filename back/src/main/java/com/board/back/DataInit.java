@@ -1,8 +1,5 @@
 package com.board.back;
 
-import com.board.back.entity.Board;
-import com.board.back.entity.BoardMain;
-import com.board.back.entity.Users;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.repository.BoardRepository;
 import com.board.back.repository.UserRepository;
@@ -10,8 +7,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -27,9 +22,13 @@ public class DataInit {
 
     @PostConstruct
     public void init() {
-
-        /*BoardMain boardMain = new BoardMain("자유게시판", "Y");
-        BoardMain savedBoardMain = boardMainRepository.save(boardMain);
+        /*
+        BoardMain boardMain1 = new BoardMain("공지사항", "Y");
+        BoardMain boardMain2 = new BoardMain("자료실", "Y");
+        BoardMain boardMain3 = new BoardMain("자유게시판", "Y");
+        boardMainRepository.save(boardMain1);
+        boardMainRepository.save(boardMain2);
+        BoardMain savedBoardMain = boardMainRepository.save(boardMain3);
 
         BoardMain findBoardMain = boardMainRepository.findByBoardMainIdx(savedBoardMain.getBoardMainIdx());
         for (int i = 0; i < 24; i++) {

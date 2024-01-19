@@ -1,4 +1,4 @@
-package com.board.back.model;
+package com.board.back.form.condition;
 
 import lombok.Data;
 
