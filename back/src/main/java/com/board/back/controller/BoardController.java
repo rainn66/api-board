@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class BoardController {
      * 등록
      */
     @PostMapping("/add")
-    public ResponseEntity<Map<String, Object>> boardAdd(@RequestBody @Validated BoardSaveForm saveForm,
+    public ResponseEntity<Map<String, Object>> boardAdd(@RequestBody @Valid BoardSaveForm saveForm,
                                                         BindingResult bindingResult) {
         Map<String, Object> result = new HashMap<>();
 
@@ -76,7 +77,7 @@ public class BoardController {
             result.put("resultCd", "FAIL");
             result.put("msg", "필수 값 오류");
         } else {
-            //boardService.regBoardInfo(saveForm);
+            boardService.regBoardInfo(saveForm);
             result.put("resultCd", "SUCCESS");
             result.put("msg", "등록되었습니다.");
         }
