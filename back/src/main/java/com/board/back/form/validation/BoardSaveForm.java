@@ -18,7 +18,7 @@ public class BoardSaveForm {
     private Long boardMainIdx;
 
     @NotBlank
-    @Size(min = 10, max = 50)
+    @Size(max = 50)
     private String boardTitle;
 
     private String boardContent;

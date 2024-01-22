@@ -22,7 +22,7 @@ export default {
 				return 'notFound'
 			} else {
 				localStorage.setItem('userToken', userInfoResponse.data.userToken);
-				localStorage.setItem('userRole', userInfoResponse.data.userRole);
+				// localStorage.setItem('userRole', userInfoResponse.data.userRole);
 				return userInfoResponse
 			}
 		} catch (err) {

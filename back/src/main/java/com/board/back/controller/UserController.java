@@ -10,8 +10,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +32,12 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> paramMap) {
-        String userId = paramMap.get("userId");
-        String password = paramMap.get("password");
+    public ResponseEntity<Map<String, Object>> login(@RequestBody UserDto userDto) {
+        String userId = userDto.getUserId();
+        String password = userDto.getPassword();
 
-        //회원 조회
-        UserDetails loginUser = userService.loadUserByUsername(userId);
+        //회원 조회 (User : Spring security UserDetail 구현체)
+        User loginUser = userService.loadUserByUsername(userId);
 
         //가져온 정보와 입력한 비밀번호로 검증
         Authentication authentication = authenticationManager.authenticate(
@@ -45,6 +49,8 @@ public class UserController {
 
         //accessToken 생성
         String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());
+
+        userService.updateLoginDt(loginUser); //loginUser.getUsername() = userId
 
         Map<String, Object> result = new HashMap<>();
         result.put("userId", loginUser.getUsername());

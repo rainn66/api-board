@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserDto {
     private Long userIdx;
+
     private String userId;
+
     private String userNm;
+
     private String password;
 
     //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -23,11 +23,11 @@ public class JwtUtil {
 
     public String createJwt(String userId, String userNm){
         Algorithm algorithm = Algorithm.HMAC256(secret);
-
+        //LocalDateTime expiredDateTime = LocalDateTime.now().plusSeconds(10);
+        //Date expiredDt = java.sql.Timestamp.valueOf(expiredDateTime);
         return JWT.create()
             .withIssuer(issuer)
             .withClaim("userId", userId)
-            .withClaim("userNm", userNm)
             .withIssuedAt(new Date())
             .sign(algorithm);
     }
@@ -35,7 +35,7 @@ public class JwtUtil {
 
     public DecodedJWT decodeJwt(String jwt) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
+            Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
             JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer).build();
             return verifier.verify(jwt);
         } catch (JWTVerificationException e) {

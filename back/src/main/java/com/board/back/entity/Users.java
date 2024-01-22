@@ -27,4 +27,8 @@ public class Users extends BaseEntity{
 
     private LocalDateTime lastLoginDt;
 
+    public void updateLastLoginDt(LocalDateTime lastLoginDt) {
+        this.lastLoginDt = lastLoginDt;
+    }
+
 }

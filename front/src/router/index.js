@@ -17,28 +17,40 @@ const requireAuth = () => (from, to, next) => {
 	next('/login');
 }
 
+const noRequireAuth = () => (from, to, next) => {
+	const token = localStorage.getItem("userToken");
+	if (token) {
+		store.state.isLogin = true;
+	}
+	return next();
+};
+
 
 
 const routes = [
 	{
 		path: '/',
 		name: 'AppHome',
-		component: AppHome
+		component: AppHome,
+		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/login',
 		name: 'AppLogin',
-		component: AppLogin
+		component: AppLogin,
+		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/about',
 		name: 'AppAbout',
-		component: () => import('../views/AppAbout.vue')
+		component: () => import('../views/AppAbout.vue'),
+		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/board',
 		name: 'BoardList',
-		component: BoardList
+		component: BoardList,
+		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/boardAdd',
