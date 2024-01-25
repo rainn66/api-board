@@ -35,7 +35,7 @@
             </tr>
             <tr v-for="(row, idx) in list" :key="idx">
                 <td>{{ idx + 1 }}</td>
-                <td><a v-on:click="fnGoForm(`${row.boardIdx}`)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.boardTitle }}</a></td>
+                <td><a @click="fnGoForm(row.boardIdx)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.boardTitle }}</a></td>
                 <td>{{ row.regUserId }}</td>
                 <td>{{ row.regDt }}</td>
             </tr>
@@ -44,18 +44,18 @@
         <div class="pagination w3-bar w3-padding-16 w3-small" v-if="totalPages > 0">
             <span class="pg">
                 <a href="javascript:" @click="fnGetList(1)" class="first w3-button">&lt;&lt;</a>
-                <a href="javascript:" v-if="paging.pageNumber > 0" @click="fnGetList(`${paging.pageNumber}`)"
+                <a href="javascript:" v-if="paging.pageNumber > 0" @click="fnGetList(paging.pageNumber)"
                 class="prev w3-button w3-border">&lt;</a>
                 <template v-for="(n,index) in pageNavigator()">
                     <template v-if="paging.pageNumber===n">
                         <strong class="w3-button w3-green" :key="index">{{ n + 1 }}</strong>
                     </template>
                     <template v-else>
-                        <a class="w3-button " href="javascript:;" @click="fnGetList(`${n + 1}`)" :key="index">{{ n + 1 }}</a>
+                        <a class="w3-button " href="javascript:;" @click="fnGetList(Number(n) + 1)" :key="index">{{ n + 1 }}</a>
                     </template>
                 </template>
-                <a href="javascript:" v-if="totalPages-1 > paging.pageNumber" @click="fnGetList(`${paging.pageNumber+2}`)" class="next w3-button w3-border">&gt;</a>
-                <a href="javascript:" @click="fnGetList(`${totalPages}`)" class="last w3-button">&gt;&gt;</a>
+                <a href="javascript:" v-if="totalPages-1 > paging.pageNumber" @click="fnGetList(Number(paging.pageNumber)+2)" class="next w3-button w3-border">&gt;</a>
+                <a href="javascript:" @click="fnGetList(totalPages)" class="last w3-button">&gt;&gt;</a>
             </span>
         </div>
     </div>

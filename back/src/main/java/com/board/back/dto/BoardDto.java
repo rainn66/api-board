@@ -1,14 +1,18 @@
 package com.board.back.dto;
 
+import com.board.back.entity.BoardFile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class BoardDto {
@@ -25,6 +29,8 @@ public class BoardDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime regDt;
 
+    private List<BoardFile> boardFiles;
+
     @QueryProjection
     public BoardDto(Long boardIdx, Long boardMainIdx, String boardTitle, String boardContent, String topFixYn, String regUserId, LocalDateTime regDt) {
         this.boardIdx = boardIdx;
@@ -35,4 +41,5 @@ public class BoardDto {
         this.regUserId = regUserId;
         this.regDt = regDt;
     }
+
 }

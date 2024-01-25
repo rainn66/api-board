@@ -7,6 +7,8 @@ import lombok.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BoardMain extends BaseEntity {
 
     @Id
@@ -16,13 +18,4 @@ public class BoardMain extends BaseEntity {
     private String boardNm;
 
     private String useYn;
-
-    public BoardMain(String boardNm, String useYn) {
-        this.boardNm = boardNm;
-        this.useYn = useYn;
-    }
-
-    public BoardMain() {
-
-    }
 }

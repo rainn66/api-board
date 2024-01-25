@@ -27,6 +27,14 @@
             <textarea id="" cols="30" rows="10" v-model="boardContent" class="w3-input w3-border" style="resize: none;">
             </textarea>
         </div>
+        <div class="board-contents" id="fileContents">
+            <div>
+                <input type="file" id="uploadFile1" name="uploadFile1">
+                <button type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>&nbsp;
+                <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDelFile">파일삭제</button>&nbsp;
+                <span>하단 파일 부터 삭제됩니다.</span>
+            </div>
+        </div>
         <div class="board-contents">
             <input type="text" v-model="regUserId" class="w3-input w3-border" placeholder="자동 등록 항목입니다." readonly>
         </div>
@@ -68,18 +76,30 @@ export default {
         },
         fnAddForm() {
             if (confirm("저장하시겠습니까?")) {
-                this.form = {
+                this.body = {
                     "boardMainIdx": this.boardMainIdx,
                     "boardTitle": this.boardTitle,
                     "boardContent": this.boardContent,
                     "topFixYn": this.topFixYn,
                 }
+                var frm = new FormData();
+
+                //파라미터 FormData 추가
+                frm.append('body', new Blob([JSON.stringify(this.body)], {type: 'application/json'}));
+
+                //파일데이터 FormData 추가
+                var fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length;
+                for (var i = 1; i <= fileCnt; i++) {
+                    if (document.getElementById('uploadFile' + i).files[0] !== undefined) {
+                        frm.append('file', document.getElementById('uploadFile' + i).files[0]);
+                    }
+                }
+
                 this.$axios.post(
-                    this.$serverUrl + '/board/add'
-                    , JSON.stringify(this.form)
-                    , {
+                    this.$serverUrl + '/board/add', frm,
+                    {
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'multipart/form-data'
                         }
                     }
                 ).then((res) => {
@@ -92,6 +112,25 @@ export default {
                 }).catch((err) => {
                     alert(err);
                 });
+            }
+        },
+        fnAddFile() {
+            var addFileNum = document.getElementById('fileContents').getElementsByTagName('input').length + 1
+
+            var addDiv = document.createElement('div');
+            addDiv.innerHTML = "<input type='file' id='uploadFile" + addFileNum + "' name='uploadFile" + addFileNum + "'>";
+
+            var fileCont = document.getElementById('fileContents');
+            fileCont.append(addDiv);
+        },
+        fnDelFile() {
+            var fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length
+            if (fileCnt === 1) {
+                alert("더이상 삭제할 수 없습니다.");
+            } else {
+                if (confirm("삭제하시겠습니까?")) {
+                    document.getElementById('uploadFile' + fileCnt).remove();
+                }
             }
         }
     }

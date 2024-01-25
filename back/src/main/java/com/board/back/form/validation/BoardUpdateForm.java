@@ -1,13 +1,14 @@
 package com.board.back.form.validation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -31,4 +32,6 @@ public class BoardUpdateForm {
 
     @NotEmpty
     private String regUserId;
+
+    private List<Long> boardFileIdxList;
 }
