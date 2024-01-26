@@ -55,8 +55,11 @@ public class FileUtil {
     }
 
     public BoardFileForm saveFile(MultipartFile file, String subDir) throws IOException {
-        String fileOrgNm = file.getOriginalFilename();
 
+        String fileOrgNm = file.getOriginalFilename();
+        if (fileOrgNm == null) {
+            return null;
+        }
         //서버에 저장하는 파일명 UUID
         String fileSaveNm = createSaveFileName(fileOrgNm);
 
@@ -66,13 +69,20 @@ public class FileUtil {
         return new BoardFileForm(fileOrgNm, fileSaveNm, fileDir + subDir);
     }
 
+    public void deleteFile(String fileSavePath, String fileSaveNm){
+        File deleteFile = new File(fileSavePath + "/" + fileSaveNm);
+        if (deleteFile.exists()) {
+            if (deleteFile.delete()) {
+                log.info("file delete : {}", fileSavePath + "/" + fileSaveNm);
+            }
+        }
+    }
+
     private String createSaveFileName(String fileOrgNm) {
         // ex) UUID.png
         int pos = fileOrgNm.lastIndexOf(".");
         return UUID.randomUUID() + "." + fileOrgNm.substring(pos + 1);
     }
-
-
 
 
 }

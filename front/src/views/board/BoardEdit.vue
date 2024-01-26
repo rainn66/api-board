@@ -33,7 +33,7 @@
                 <input style="display:none;" type="file" name="uploadFile" :id="'upload_' + row.boardFileIdx" @change="fnChangeFileNm(row.boardFileIdx)">
                 <label style="margin-right:10px;cursor:pointer;" :for="'upload_' + row.boardFileIdx">{{row.fileOrgNm}}</label>
                 <button style="margin-right:10px;" v-if="idx === 0" type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>
-                <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDelFile(row.boardFileIdx);">파일삭제</button>&nbsp;
+                <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDeleteFile(row.boardFileIdx, idx);">파일삭제</button>&nbsp;
             </div>
         </div>
         <div class="board-contents">
@@ -59,8 +59,8 @@ export default {
             regDt: '',
             regUserId: '',
             boardMainList: {boardMainIdx:'', boardNm:''},
-            boardFiles: {boardFileIdx:'', fileSaveNm: '', fileOrgNm: ''},
-            newFileCnt: 1,
+            boardFiles: [{boardFileIdx:'', fileSaveNm: '', fileOrgNm: ''}],
+            newFileCnt: 1
         }
     },
     mounted() {
@@ -81,10 +81,14 @@ export default {
                     this.delYn = res.data.boardInfo.delYn;
                     this.regDt = res.data.boardInfo.regDt;
                     this.regUserId = res.data.boardInfo.regUserId;
-
-                    this.boardFiles = res.data.boardInfo.boardFiles;
+                    if (res.data.boardInfo.boardFiles.length === 0) {
+                        this.boardFiles = [{boardFileIdx:this.newFileCnt + '_0', fileSaveNm: '', fileOrgNm: '파일을 선택해주세요.'}]
+                    } else {
+                        this.boardFiles = res.data.boardInfo.boardFiles;
+                    }
                 }).catch((err) => {
-                    alert(err);
+                    alert(err.response.data.errorCode + " : " + err.response.data.message);
+                    this.$store.state.loadingStatus = false;
                 });
             }
         },
@@ -97,13 +101,14 @@ export default {
         },
         fnEditForm() {
             if (this.boardIdx === undefined || this.boardIdx === '') {
-                //error page 이동
+                alert("잘못된 접근입니다.");
             }
 
             if (confirm("수정하시겠습니까?")) {
                 const frm = new FormData();
                 const boardFileIdxList = [];
 
+                //파일데이터 FormData 추가
                 document.getElementsByName('uploadFile').forEach((htmlObj) => {
                     let file = document.getElementById(htmlObj.id).files[0];
                     if (file !== undefined) {
@@ -112,6 +117,7 @@ export default {
                     }
                 });
 
+                //파라미터 FormData 추가
                 this.body = {
                     "boardIdx": this.boardIdx,
                     "boardMainIdx": this.boardMainIdx,
@@ -130,15 +136,12 @@ export default {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                ).then((res) => {
-                    if (res.data.resultCd === "FAIL") {
-                        alert(res.data.msg);
-                    } else {
-                        alert("수정되었습니다.");
-                        this.fnGoList();
-                    }
+                ).then(() => {
+                    alert("수정되었습니다.");
+                    this.fnGoList();
                 }).catch((err) => {
-                    alert(err);
+                    alert(err.response.data.errorCode + " : " + err.response.data.message);
+                    this.$store.state.loadingStatus = false;
                 });
             }
         },
@@ -147,10 +150,20 @@ export default {
                 //error page 이동
             }
 
+            const boardFileIdxList = [];
+            //파일데이터 FormData 추가
+            document.getElementsByName('uploadFile').forEach((htmlObj) => {
+                let boardFileIdx = htmlObj.id.substring(htmlObj.id.lastIndexOf('_')+1)
+                if (Number(boardFileIdx) !== 0) {
+                    boardFileIdxList.push(boardFileIdx);
+                }
+            });
+
             if (confirm("삭제하시겠습니까?")) {
                 this.form = {
                     "boardIdx": this.boardIdx,
-                    "regUserId": this.regUserId
+                    "regUserId": this.regUserId,
+                    "boardFileIdxList": boardFileIdxList
                 }
                 this.$axios.post(
                     this.$serverUrl + '/board/delete'
@@ -160,15 +173,12 @@ export default {
                             'Content-Type': 'application/json'
                         }
                     }
-                ).then((res) => {
-                    if (res.data.resultCd === "FAIL") {
-                        alert(res.data.msg);
-                    } else {
-                        alert("삭제되었습니다.");
-                        this.fnGoList();
-                    }
+                ).then(() => {
+                    alert("삭제되었습니다.");
+                    this.fnGoList();
                 }).catch((err) => {
-                    alert(err);
+                    alert(err.response.data.errorCode + " : " + err.response.data.message);
+                    this.$store.state.loadingStatus = false;
                 });
             }
         },
@@ -176,13 +186,36 @@ export default {
             this.newFileCnt += 1
             this.boardFiles.push({boardFileIdx:this.newFileCnt + '_0', fileSaveNm:'', fileOrgNm:'파일을 선택하세요.'})
         },
-        fnDelFile() {
-            let fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length
+        fnDeleteFile(idx, rowIdx) {
+            let fileCnt = document.getElementsByName('uploadFile').length
             if (fileCnt === 1) {
                 alert("더이상 삭제할 수 없습니다.");
             } else {
                 if (confirm("삭제하시겠습니까?")) {
-                    document.getElementById('uploadFile' + fileCnt).remove();
+                    let boardFileIdx = String(idx).substring(String(idx).lastIndexOf('_')+1);
+                    if (Number(boardFileIdx) !== 0) {
+                        this.form = {
+                            "boardFileIdx": boardFileIdx,
+                            "regUserId": this.regUserId
+                        }
+                        this.$axios.post(
+                            this.$serverUrl + '/board/file/delete'
+                            , JSON.stringify(this.form)
+                            , {
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        ).then(() => {
+                            this.boardFiles.splice(rowIdx, 1);
+                            alert("삭제되었습니다.");
+                        }).catch((err) => {
+                            alert(err.errorCode + " : " + err.message);
+                            this.$store.state.loadingStatus = false;
+                        });
+                    } else {
+                        this.boardFiles.splice(rowIdx, 1);
+                    }
                 }
             }
         },

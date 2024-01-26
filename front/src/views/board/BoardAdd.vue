@@ -28,11 +28,11 @@
             </textarea>
         </div>
         <div class="board-contents" id="fileContents">
-            <div>
-                <input type="file" id="uploadFile1" name="uploadFile1">
-                <button type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>&nbsp;
-                <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDelFile">파일삭제</button>&nbsp;
-                <span>하단 파일 부터 삭제됩니다.</span>
+            <div v-for="(row, idx) in boardFiles" :key="row.boardFileIdx">
+                <input style="display:none;" type="file" name="uploadFile" :id="'upload_' + row.boardFileIdx" @change="fnChangeFileNm(row.boardFileIdx)">
+                <label style="margin-right:10px;cursor:pointer;" :for="'upload_' + row.boardFileIdx">{{row.fileOrgNm}}</label>
+                <button style="margin-right:10px;" v-if="idx === 0" type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>
+                <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDelFile">파일삭제</button>
             </div>
         </div>
         <div class="board-contents">
@@ -55,7 +55,9 @@ export default {
             topFixYn: 'N',
             regDt: '',
             regUserId: '',
-            boardMainList: {boardMainIdx:'', boardNm:''}
+            boardMainList: {boardMainIdx:'', boardNm:''},
+            boardFiles: [{boardFileIdx:'', fileSaveNm: '', fileOrgNm: ''}],
+            newFileCnt: 1
         }
     },
     mounted() {
@@ -72,28 +74,32 @@ export default {
             this.$axios.get(this.$serverUrl + '/board/add'
             ).then((res) => {
                 this.boardMainList = res.data.boardMainList;
+                this.boardFiles = [{boardFileIdx:this.newFileCnt + '_0', fileSaveNm: '', fileOrgNm: '파일을 선택해주세요.'}]
+            }).catch((err) => {
+                alert(err.response.data.errorCode + " : " + err.response.data.message);
+                this.$store.state.loadingStatus = false;
             });
         },
         fnAddForm() {
             if (confirm("저장하시겠습니까?")) {
+                const frm = new FormData();
+
+                //파일데이터 FormData 추가
+                document.getElementsByName('uploadFile').forEach((htmlObj) => {
+                    let file = document.getElementById(htmlObj.id).files[0];
+                    if (file !== undefined) {
+                        frm.append("file", file);
+                    }
+                });
+
+                //파라미터 FormData 추가
                 this.body = {
                     "boardMainIdx": this.boardMainIdx,
                     "boardTitle": this.boardTitle,
                     "boardContent": this.boardContent,
                     "topFixYn": this.topFixYn,
                 }
-                var frm = new FormData();
-
-                //파라미터 FormData 추가
                 frm.append('body', new Blob([JSON.stringify(this.body)], {type: 'application/json'}));
-
-                //파일데이터 FormData 추가
-                var fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length;
-                for (var i = 1; i <= fileCnt; i++) {
-                    if (document.getElementById('uploadFile' + i).files[0] !== undefined) {
-                        frm.append('file', document.getElementById('uploadFile' + i).files[0]);
-                    }
-                }
 
                 this.$axios.post(
                     this.$serverUrl + '/board/add', frm,
@@ -102,29 +108,21 @@ export default {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                ).then((res) => {
-                    if (res.data.resultCd === "FAIL") {
-                        alert(res.data.msg);
-                    } else if (res.data.resultCd === "SUCCESS") {
-                        alert(res.data.msg);
-                        this.fnGoList();
-                    }
+                ).then(() => {
+                    alert("저장되었습니다.");
+                    this.fnGoList();
                 }).catch((err) => {
-                    alert(err);
+                    alert(err.response.data.errorCode + " : " + err.response.data.message);
+                    this.$store.state.loadingStatus = false;
                 });
             }
         },
         fnAddFile() {
-            var addFileNum = document.getElementById('fileContents').getElementsByTagName('input').length + 1
-
-            var addDiv = document.createElement('div');
-            addDiv.innerHTML = "<input type='file' id='uploadFile" + addFileNum + "' name='uploadFile" + addFileNum + "'>";
-
-            var fileCont = document.getElementById('fileContents');
-            fileCont.append(addDiv);
+            this.newFileCnt += 1
+            this.boardFiles.push({boardFileIdx:this.newFileCnt + '_0', fileSaveNm:'', fileOrgNm:'파일을 선택하세요.'})
         },
         fnDelFile() {
-            var fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length
+            const fileCnt = document.getElementById('fileContents').getElementsByTagName('input').length
             if (fileCnt === 1) {
                 alert("더이상 삭제할 수 없습니다.");
             } else {
@@ -132,6 +130,9 @@ export default {
                     document.getElementById('uploadFile' + fileCnt).remove();
                 }
             }
+        },
+        fnChangeFileNm(idx) {
+            document.querySelector('label[for=upload_' + idx + ']').innerText = document.getElementById('upload_' + idx).files[0].name;
         }
     }
 }

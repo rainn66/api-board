@@ -1,7 +1,7 @@
 package com.board.back.service.impl;
 
-import com.board.back.dto.UserDto;
 import com.board.back.entity.Users;
+import com.board.back.form.validation.UserSaveForm;
 import com.board.back.repository.UserRepository;
 import com.board.back.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -47,12 +47,12 @@ public class UserServiceImpl implements UserService {
      * 회원 가입
      */
     @Transactional
-    public void signUp(UserDto userDto){
+    public void signUp(UserSaveForm userForm){
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Users users = Users.builder()
-                .userId(userDto.getUserId())
-                .userNm(userDto.getUserNm())
-                .password(passwordEncoder.encode(userDto.getPassword()))
+                .userId(userForm.getUserId())
+                .userNm(userForm.getUserNm())
+                .password(passwordEncoder.encode(userForm.getPassword()))
                 .build();
         userRepository.save(users);
     }
@@ -60,8 +60,8 @@ public class UserServiceImpl implements UserService {
     /**
      * 회원 중복 체크
      */
-    public boolean validateDuplicateUsers(UserDto userDto) {
-        return userRepository.findByUserId(userDto.getUserId()).isEmpty(); //true=회원가입가능
+    public boolean validateDuplicateUsers(UserSaveForm userForm) {
+        return userRepository.findByUserId(userForm.getUserId()).isEmpty(); //true=회원가입가능
     }
 
     /**

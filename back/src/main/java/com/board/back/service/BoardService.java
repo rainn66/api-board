@@ -37,4 +37,9 @@ public interface BoardService {
      * 게시글 삭제
      */
     void delBoardInfo(BoardDeleteForm deleteForm);
+
+    /**
+     * 게시글 업로드 파일 개별 삭제
+     */
+    void delBoardFileInfo(Long boardFileIdx);
 }

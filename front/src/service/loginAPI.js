@@ -5,7 +5,7 @@ const getUserInfo = (userId, password) => {
 		'userId': userId,
 		'password': password
 	}
-	var serverUrl = '//localhost:8080';
+	const serverUrl = '//localhost:8080';
 	return axios.post( serverUrl + '/user/login', JSON.stringify(reqData), {
 		headers: {
 			'Content-type': 'application/json'

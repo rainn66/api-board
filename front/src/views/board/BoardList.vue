@@ -108,15 +108,16 @@ export default {
                 params: this.requestBody,
                 headers: {}
             }).then((res) => {
-                this.list = res.data.content;
-                this.paging = res.data.pageable;
-                this.totalPages = res.data.totalPages;
+                this.list = res.data.boardList.content;
+                this.paging = res.data.boardList.pageable;
+                this.totalPages = res.data.boardList.totalPages;
             }).catch((err) => {
-                alert(err);
+                alert(err.response.data.errorCode + " : " + err.response.data.message);
+                this.$store.state.loadingStatus = false;
             });
         },
         fnGoForm(boardIdx) {
-            var routerName = 'BoardAdd';
+            let routerName = 'BoardAdd';
             if (boardIdx !== undefined && boardIdx !== '') {
                 routerName = 'BoardEdit';
                 this.requestBody.boardIdx = boardIdx;

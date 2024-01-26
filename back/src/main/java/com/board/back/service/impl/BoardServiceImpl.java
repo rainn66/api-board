@@ -13,6 +13,7 @@ import com.board.back.repository.BoardFileRepository;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.repository.BoardRepository;
 import com.board.back.service.BoardService;
+import com.board.back.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardMainRepository boardMainRepository;
 
     private final BoardFileRepository boardFileRepository;
+
+    private final FileUtil fileUtil;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -81,29 +84,29 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 수정
      */
     @Transactional //영속성컨텍스트 트랜잭션 내부에서만 동작(변경감지)
-    public void modBoardInfo(BoardUpdateForm updateForm, List<BoardFileForm> fileForm) {
+    public void modBoardInfo(BoardUpdateForm updateForm, List<BoardFileForm> fileFormList) {
         Board findBoard = boardRepository.findByBoardIdx(updateForm.getBoardIdx());
         findBoard.update(boardMainRepository.findByBoardMainIdx(updateForm.getBoardMainIdx()),
                 updateForm.getBoardTitle(), updateForm.getBoardContent(), updateForm.getTopFixYn());
 
-        List<Long> boardFileIdxList = updateForm.getBoardFileIdxList();
-        for (int i=0; i<fileForm.size(); i++) {
-            BoardFileForm boardFileForm = fileForm.get(i);
-            if (boardFileIdxList.get(i) == 0) {
-                //신규등록은 Idx = 0 으로 넘어옴
-                BoardFile boardFile = BoardFile.builder()
-                        .board(findBoard)
-                        .fileOrgNm(fileForm.get(i).getFileOrgNm())
-                        .fileSaveNm(fileForm.get(i).getFileSaveNm())
-                        .fileSavePath(fileForm.get(i).getFileSavePath())
-                        .build();
-                boardFileRepository.save(boardFile);
-            } else {
-                //기존파일 정보 업데이트
-                Optional<BoardFile> boardFile = boardFileRepository.findById(boardFileIdxList.get(i));
-                boardFile.ifPresent(bf -> bf.update(boardFileForm.getFileOrgNm(),
-                        boardFileForm.getFileSaveNm(),
-                        boardFileForm.getFileSavePath()));
+        //파일 정보 저장
+        if (!fileFormList.isEmpty()) {
+            List<Long> boardFileIdxList = updateForm.getBoardFileIdxList();
+            for (int i=0; i<fileFormList.size(); i++) {
+                BoardFileForm boardFileForm = fileFormList.get(i);
+                if (boardFileIdxList.get(i) == 0) {
+                    //신규등록은 Idx = 0
+                    regBoardFile(findBoard, fileFormList.get(i));
+                } else {
+                    Optional<BoardFile> boardFile = boardFileRepository.findById(boardFileIdxList.get(i));
+                    //기존 파일 삭제 및 정보 업데이트
+                    boardFile.ifPresent(bf -> {
+                        fileUtil.deleteFile(bf.getFileSavePath(), bf.getFileSaveNm());
+                        bf.update(boardFileForm.getFileOrgNm(),
+                                boardFileForm.getFileSaveNm(),
+                                boardFileForm.getFileSavePath());
+                    });
+                }
             }
         }
     }
@@ -115,20 +118,40 @@ public class BoardServiceImpl implements BoardService {
     public void delBoardInfo(BoardDeleteForm deleteForm) {
         Board findBoard = boardRepository.findByBoardIdx(deleteForm.getBoardIdx());
         findBoard.delete("Y"); //update 동작(변경감지)
+
+        //파일삭제
+        deleteForm.getBoardFileIdxList().forEach(this::delBoardFileInfo);
+    }
+
+    /**
+     * 게시판 업로드 파일 등록 List
+     */
+    private void regBoardFileInfo(List<BoardFileForm> fileFormList, Board savedBoard) {
+        fileFormList.forEach(file -> {
+            regBoardFile(savedBoard, file);
+        });
     }
 
     /**
      * 게시판 업로드 파일 등록
      */
-    private void regBoardFileInfo(List<BoardFileForm> fileForm, Board savedBoard) {
-        fileForm.forEach(file -> {
-            BoardFile boardFile = BoardFile.builder()
-                    .board(savedBoard)
-                    .fileOrgNm(file.getFileOrgNm())
-                    .fileSaveNm(file.getFileSaveNm())
-                    .fileSavePath(file.getFileSavePath())
-                    .build();
-            boardFileRepository.save(boardFile);
-        });
+    private void regBoardFile(Board savedBoard, BoardFileForm fileFrom) {
+        BoardFile boardFile = BoardFile.builder()
+                .board(savedBoard)
+                .fileOrgNm(fileFrom.getFileOrgNm())
+                .fileSaveNm(fileFrom.getFileSaveNm())
+                .fileSavePath(fileFrom.getFileSavePath())
+                .build();
+        boardFileRepository.save(boardFile);
+    }
+
+    /**
+     * 게시판 업로드 파일 개별 삭제
+     */
+    @Transactional
+    public void delBoardFileInfo(Long boardFileIdx) {
+        Optional<BoardFile> boardFile = boardFileRepository.findById(boardFileIdx);
+        boardFile.ifPresent(bf -> fileUtil.deleteFile(bf.getFileSavePath(), bf.getFileSaveNm()));
+        boardFileRepository.deleteById(boardFileIdx);
     }
 }
