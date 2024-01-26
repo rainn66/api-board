@@ -1,4 +1,4 @@
-## 👶js_board (Spring Boot + Vue.js)
+## 👶api-board (Spring Boot + Vue.js)
 ### 일반적인 게시판 기능을 수행합니다.
 Spring Dataa JPA, Vue.js 로 간단한 게시판 기능을 만들어보고,
 회원관련 기능을 만들어보며 Spring Security 에 대해 공부할수 있었습니다.
