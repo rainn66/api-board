@@ -1,7 +1,8 @@
-package com.board.back.util;
+package com.board.back.config.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.board.back.service.UserService;
+import com.board.back.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -10,7 +10,7 @@ import com.board.back.repository.BoardMainRepository;
 import com.board.back.service.BoardService;
 import com.board.back.util.FileUtil;
 import com.board.back.util.JwtUtil;
-import com.board.back.util.TokenRequestFilter;
+import com.board.back.config.filter.TokenRequestFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

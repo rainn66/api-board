@@ -18,25 +18,23 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     String secret;
 
-    @Value("${jwt.issuer}")
-    String issuer;
-
     public String createJwt(String userId, String userNm){
         Algorithm algorithm = Algorithm.HMAC256(secret);
         //LocalDateTime expiredDateTime = LocalDateTime.now().plusSeconds(10);
         //Date expiredDt = java.sql.Timestamp.valueOf(expiredDateTime);
         return JWT.create()
-            .withIssuer(issuer)
-            .withClaim("userId", userId)
-            .withIssuedAt(new Date())
-            .sign(algorithm);
+                .withExpiresAt(new Date(System.currentTimeMillis() + 6000 * 10)) //1분
+                .withClaim("userId", userId)
+                .withClaim("userNm", userNm)
+                .withIssuedAt(new Date())
+                .sign(algorithm);
     }
 
 
     public DecodedJWT decodeJwt(String jwt) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
-            JWTVerifier verifier = JWT.require(algorithm).withIssuer(issuer).build();
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm).build();
             return verifier.verify(jwt);
         } catch (JWTVerificationException e) {
             log.error("JWTVerificationException: {}", e.getMessage());

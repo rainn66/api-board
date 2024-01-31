@@ -28,7 +28,7 @@
             </textarea>
         </div>
         <div class="board-contents" id="fileContents">
-            <div v-for="(row, idx) in boardFiles" :key="row.boardFileIdx">
+            <div style="margin-bottom:5px;" v-for="(row, idx) in boardFiles" :key="row.boardFileIdx">
                 <input style="display:none;" type="file" name="uploadFile" :id="'upload_' + row.boardFileIdx" @change="fnChangeFileNm(row.boardFileIdx)">
                 <label style="margin-right:10px;cursor:pointer;" :for="'upload_' + row.boardFileIdx">{{row.fileOrgNm}}</label>
                 <button style="margin-right:10px;" v-if="idx === 0" type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>

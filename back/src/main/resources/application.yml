@@ -26,7 +26,6 @@ logging.level:
 
 jwt:
     secret: APPLE!@#$BANANA!@#$PINEAPPLE!@#$
-    issuer: js.lee
 
 file:
     dir: /Users/js/Desktop/file/

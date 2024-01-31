@@ -17,7 +17,6 @@ export default {
     methods: {
         fnLogout() {
             localStorage.removeItem("userToken");
-            localStorage.removeItem("userRole");
             location.reload();
         }
     }
