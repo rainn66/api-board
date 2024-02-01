@@ -1,21 +1,19 @@
 package com.board.back.service;
 
+import com.board.back.form.validation.UserLoginForm;
 import com.board.back.form.validation.UserSaveForm;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
     /**
      * 회원 확인, UserDetail 세팅
      */
-    UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException;
+    String login(UserLoginForm userForm) throws Exception;
 
     /**
      * 회원 가입
      */
-    void signUp(UserSaveForm userForm);
+    String signUp(UserSaveForm userForm) throws Exception;
 
     /**
      * 회원 중복 체크

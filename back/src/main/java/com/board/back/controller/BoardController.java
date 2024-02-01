@@ -10,7 +10,6 @@ import com.board.back.repository.BoardMainRepository;
 import com.board.back.service.BoardService;
 import com.board.back.util.FileUtil;
 import com.board.back.util.JwtUtil;
-import com.board.back.config.filter.TokenRequestFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,15 +47,13 @@ public class BoardController {
 
     private final JwtUtil jwtUtil;
 
-    private final TokenRequestFilter tokenRequestFilter;
-
     private final FileUtil fileUtil;
 
     /**
      * 목록 조회
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> boardList(Pageable pageable,
+    public ResponseEntity<?> boardList(Pageable pageable,
                                     BoardSearchCondition searchCondition,
                                     @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) {
         Map<String, Object> result = new HashMap<>();
@@ -68,7 +65,7 @@ public class BoardController {
      * 등록 폼 조회(빈 화면, 게시판 카테고리 가져오기)
      */
     @GetMapping("/add")
-    public ResponseEntity<Map<String, Object>> boardAddForm() {
+    public ResponseEntity<?> boardAddForm() {
         Map<String, Object> result = new HashMap<>();
         result.put("boardMainList", boardMainRepository.findAll()); //게시판 카테고리 조회
         return ResponseEntity.ok(result);
@@ -78,11 +75,9 @@ public class BoardController {
      * 등록
      */
     @PostMapping("/add")
-    public ResponseEntity<Map<String, Object>> boardAdd(@RequestPart("body") @Valid BoardSaveForm saveForm,
+    public ResponseEntity<?> boardAdd(@RequestPart("body") @Valid BoardSaveForm saveForm,
                                                         @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                                         BindingResult bindingResult) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception(error.getDefaultMessage());
@@ -93,14 +88,14 @@ public class BoardController {
             }
             boardService.regBoardInfo(saveForm, fileForm);
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
 
     /**
      * 수정 폼 조회
      */
     @GetMapping("/edit/{boardIdx}")
-    public ResponseEntity<Map<String, Object>> boardEditForm(@PathVariable Long boardIdx) {
+    public ResponseEntity<?> boardEditForm(@PathVariable Long boardIdx) {
         Map<String, Object> result = new HashMap<>();
         result.put("boardMainList", boardMainRepository.findAll());
         result.put("boardInfo", boardService.getBoardInfo(boardIdx));
@@ -111,17 +106,16 @@ public class BoardController {
      * 수정
      */
     @PostMapping("/edit")
-    public ResponseEntity<Map<String, Object>> boardEdit(@RequestPart(value = "body") @Valid BoardUpdateForm updateForm,
+    public ResponseEntity<?> boardEdit(@RequestPart(value = "body") @Valid BoardUpdateForm updateForm,
                                                          @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                                          HttpServletRequest request,
                                                          BindingResult bindingResult) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-
         //Spring security 에 세팅된 회원명으로 비교 시 사용
         //String securityUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         //token 작성자 확인(작성자만 수정 가능하도록)
-        String tokenUserId = decodeToken(request);
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
         if (!updateForm.getRegUserId().equals(tokenUserId)) {
             throw new Exception("글 수정 권한이 없습니다.");
         }
@@ -136,20 +130,19 @@ public class BoardController {
             }
             boardService.modBoardInfo(updateForm, fileForm);
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
 
     /**
      * 삭제
      */
     @PostMapping("/delete")
-    public ResponseEntity<Map<String, Object>> boardDelete(@RequestBody @Valid BoardDeleteForm deleteForm,
+    public ResponseEntity<?> boardDelete(@RequestBody @Valid BoardDeleteForm deleteForm,
                                                            HttpServletRequest request,
                                                            BindingResult bindingResult) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-
         //token 작성자 확인(작성자만 삭제 가능하도록)
-        String tokenUserId = decodeToken(request);
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
         if (!deleteForm.getRegUserId().equals(tokenUserId)) {
             throw new Exception("글 수정 권한이 없습니다.");
         }
@@ -159,20 +152,19 @@ public class BoardController {
         } else {
             boardService.delBoardInfo(deleteForm);
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
 
     /**
      * 게시판 업로드 파일 개별 삭제
      */
     @PostMapping("/file/delete")
-    public ResponseEntity<Map<String, Object>> boardFileDelete(@RequestBody @Valid BoardFileDeleteForm boardFileDeleteForm,
+    public ResponseEntity<?> boardFileDelete(@RequestBody @Valid BoardFileDeleteForm boardFileDeleteForm,
                                                                HttpServletRequest request,
                                                                BindingResult bindingResult) throws Exception {
-        Map<String, Object> result = new HashMap<>();
-
         //token 작성자 확인(작성자만 삭제 가능하도록)
-        String tokenUserId = decodeToken(request);
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
         if (!boardFileDeleteForm.getRegUserId().equals(tokenUserId)) {
             throw new Exception("글 수정 권한이 없습니다.");
         }
@@ -182,11 +174,6 @@ public class BoardController {
         } else {
             boardService.delBoardFileInfo(boardFileDeleteForm.getBoardFileIdx());
         }
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
     }
-
-    private String decodeToken(HttpServletRequest request) {
-        return jwtUtil.getUserFromToken(tokenRequestFilter.parseJwt(request));
-    }
-
 }

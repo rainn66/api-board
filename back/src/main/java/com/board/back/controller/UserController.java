@@ -1,10 +1,12 @@
 package com.board.back.controller;
 
+import com.board.back.form.validation.UserLoginForm;
 import com.board.back.form.validation.UserSaveForm;
 import com.board.back.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -19,62 +21,38 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:8081", exposedHeaders = "token")
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
 
-    //@PostMapping("/login")
-    //public ResponseEntity<Map<String, Object>> login(@RequestBody @Valid UserLoginForm userForm,
-    //                                                 BindingResult bindingResult) throws Exception {
-    //    String userId = userForm.getUserId();
-    //    String password = userForm.getPassword();
-    //
-    //    if (bindingResult.hasErrors()) {
-    //        FieldError error = bindingResult.getFieldErrors().get(0);
-    //        throw new Exception(error.getDefaultMessage());
-    //    }
-    //
-    //    //회원 조회 (User : Spring security UserDetail 구현체)
-    //    User loginUser = userService.loadUserByUsername(userId);
-    //
-    //    //가져온 정보와 입력한 비밀번호로 검증
-    //    Authentication authentication = authenticationManager.authenticate(
-    //            new UsernamePasswordAuthenticationToken(loginUser.getUsername(), password)
-    //    );
-    //
-    //    //스프링 시큐리티에 인증값 세팅
-    //    SecurityContextHolder.getContext().setAuthentication(authentication);
-    //
-    //    //accessToken 생성
-    //    String accessToken = jwtUtil.createJwt(loginUser.getUsername(), loginUser.getUsername());
-    //
-    //    Map<String, Object> result = new HashMap<>();
-    //    result.put("userToken", accessToken);//회원 접속 고유 token
-    //
-    //    return ResponseEntity.ok(result);
-    //}
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Valid UserLoginForm userForm,
+                                                     BindingResult bindingResult) throws Exception {
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception(error.getDefaultMessage());
+        }
+        HttpHeaders responseHeader = new HttpHeaders();
+        responseHeader.add("Authorization", userService.login(userForm));
+        return ResponseEntity.ok().headers(responseHeader).body("Not null");
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<Map<String, Object>> signup(@RequestBody @Valid UserSaveForm userForm,
                                                       BindingResult bindingResult) throws Exception {
         Map<String, Object> result = new HashMap<>();
-
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception(error.getDefaultMessage());
         }
-
         if (userService.validateDuplicateUsers(userForm.getUserId())) {
-            userService.signUp(userForm);
-            result.put("userNm", String.valueOf(userForm.getUserNm()));
-            result.put("resultCd", "SUCCESS");
+            String userNm = userService.signUp(userForm);
+            result.put("userNm", userNm);
         } else {
-            result.put("resultCd", "FAIL");
-            result.put("msg", "이미 등록된 ID 입니다.");
-            //return ResponseEntity.ofNullable(result);
+            throw new Exception("이미 존재하는 회원입니다.");
         }
         return ResponseEntity.ok(result);
     }

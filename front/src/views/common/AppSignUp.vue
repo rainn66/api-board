@@ -55,14 +55,10 @@ export default {
                     headers: {'Content-Type': 'application/json'}
                 }
             ).then((res) => {
-                if (res.data.resultCd === 'FAIL') {
-                    alert(res.data.msg);
-                } else {
-                    alert(res.data.userNm + " 님 환영합니다. 로그인을 진행해주세요");
-                    this.$router.push({
-                        name: 'AppLogin',
-                    });
-                }
+                alert(res.data.userNm + " 님 환영합니다. 로그인을 진행해주세요");
+                this.$router.push({
+                    name: 'AppLogin',
+                });
             }).catch((err) => {
                 alert(err);
             });

@@ -49,6 +49,7 @@ export default {
                     this.fnGoHome();
                 }
             } catch (err) {
+                console.log(err);
                 alert(err.message);
             }
         },

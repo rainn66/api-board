@@ -1,6 +1,6 @@
 package com.board.back.config.impl;
 
-import com.board.back.entity.Users;
+import com.board.back.entity.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +10,10 @@ import java.util.Collection;
 @Data
 public class CustomUserDetails implements UserDetails {
 
-    private Users users;
+    private User user;
 
-    public CustomUserDetails(Users users) {
-        this.users = users;
+    public CustomUserDetails(User user) {
+        this.user = user;
     }
 
     @Override
@@ -23,12 +23,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getUserId();
     }
 
     @Override

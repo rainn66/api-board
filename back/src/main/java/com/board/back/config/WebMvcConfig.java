@@ -1,9 +1,6 @@
 package com.board.back.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -20,9 +17,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
     //    pageableArgumentResolver.setFallbackPageable(PageRequest.of(0, 10));
     //    argumentResolvers.add(pageableArgumentResolver);
     //}
-
-    @Bean
-    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
 }

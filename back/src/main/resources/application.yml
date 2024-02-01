@@ -24,8 +24,5 @@ logging.level:
 #    org.hibernate.type: trace
 
 
-jwt:
-    secret: APPLE!@#$BANANA!@#$PINEAPPLE!@#$
-
 file:
     dir: /Users/js/Desktop/file/

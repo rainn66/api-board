@@ -1,6 +1,6 @@
 package com.board.back.repository;
 
-import com.board.back.entity.Users;
+import com.board.back.entity.User;
 import com.board.back.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,17 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LOCAL_DATE_TIME;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -39,32 +35,32 @@ class UserRepositoryTest {
     @Test
     void test_1(){
         String encPassword = passwordEncoder.encode("test!");
-        Users userEntity = Users.builder()
+        User userEntity = User.builder()
                 .userId("test")
                 .userNm("테스트유저")
                 .password(encPassword)
                 .lastLoginDt(LocalDateTime.now())
                 .build();
 
-        Users savedUser = userRepository.save(userEntity);
+        User savedUser = userRepository.save(userEntity);
         assertThat(userEntity.getUserId()).isEqualTo(savedUser.getUserId());
     }
 
-    @DisplayName("2. 유저정보 검색 후 비밀번호 비교")
-    @Test
-    void test_2(){
-
-        String userId = "test_user";
-        String userPassword = "test_password";
-
-        UserDetails user = userService.loadUserByUsername(userId);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, userPassword);
-        authenticationManager.authenticate(authenticationToken);
-
-        assertThat(authenticationToken.getCredentials()).isEqualTo(userPassword);
-
-        System.out.println("getCredentials: " + authenticationToken.getCredentials());
-        System.out.println("userPw: " + userPassword);
-    }
+    //@DisplayName("2. 유저정보 검색 후 비밀번호 비교")
+    //@Test
+    //void test_2(){
+    //
+    //    String userId = "test_user";
+    //    String userPassword = "test_password";
+    //
+    //    UserDetails user = userService.loadUserByUsername(userId);
+    //    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, userPassword);
+    //    authenticationManager.authenticate(authenticationToken);
+    //
+    //    assertThat(authenticationToken.getCredentials()).isEqualTo(userPassword);
+    //
+    //    System.out.println("getCredentials: " + authenticationToken.getCredentials());
+    //    System.out.println("userPw: " + userPassword);
+    //}
 
 }
