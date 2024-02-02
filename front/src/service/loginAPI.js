@@ -8,8 +8,7 @@ const getUserInfo = (userId, password) => {
 	const serverUrl = '//localhost:8080';
 	return axios.post( serverUrl + '/user/login', JSON.stringify(reqData), {
 		headers: {
-			'Content-type': 'application/json',
-			'Authorization': ''
+			'Content-type': 'application/json'
 		}
 	});
 }
@@ -18,19 +17,12 @@ export default {
 	async doLogin(userId, password) {
 		try {
 			const getUserInfoPromise = getUserInfo(userId, password)
-			const userInfoResponse = await getUserInfoPromise;
-
-			console.log(userInfoResponse.headers.getAuthorization());
-			console.log(userInfoResponse.request.Authorization);
-			console.log(userInfoResponse.request.headers);
-			console.log(userInfoResponse);
+			const [userInfoResponse] = await Promise.all([getUserInfoPromise])
 
 			if (userInfoResponse.data.length === 0) {
-				console.log('notFound');
 				return 'notFound'
 			} else {
-				localStorage.setItem('userToken', userInfoResponse.data.userToken);
-				// localStorage.setItem('userRole', userInfoResponse.data.userRole);
+				localStorage.setItem('userToken', userInfoResponse.headers.getAuthorization());
 				return userInfoResponse
 			}
 		} catch (err) {

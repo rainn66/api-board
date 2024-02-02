@@ -1,9 +1,9 @@
-import {USER_ID, IS_AUTH, ERROR_STATE} from './mutation_types'
+import {IS_AUTH, ERROR_STATE} from './mutation_types'
 import loginAPI from '../service/loginAPI'
 
-let setUserId = ({commit}, data) => {
-	commit(USER_ID, data)
-}
+// let setUserId = ({commit}, data) => {
+// 	commit(USER_ID, data)
+// }
 
 let setErrorState = ({commit}, data) => {
 	commit(ERROR_STATE, data)
@@ -21,7 +21,7 @@ let processResponse = (store, loginResponse) => {
 			setIsAuth(store, false);
 			break;
 		default:
-			setUserId(store, loginResponse.userId);
+			// setUserId(store, loginResponse.data.userId);
 			setErrorState(store, '');
 			setIsAuth(store, true);
 	}

@@ -8,12 +8,12 @@ public interface UserService {
     /**
      * 회원 확인, UserDetail 세팅
      */
-    String login(UserLoginForm userForm) throws Exception;
+    String login(UserLoginForm userForm);
 
     /**
      * 회원 가입
      */
-    String signUp(UserSaveForm userForm) throws Exception;
+    String signUp(UserSaveForm userForm);
 
     /**
      * 회원 중복 체크

@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,34 +30,28 @@ public class UserServiceImpl implements UserService {
     /**
      * 회원 확인
      */
-    public String login(UserLoginForm userForm) throws Exception {
-        try {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                    = new UsernamePasswordAuthenticationToken(userForm.getUserId(), userForm.getPassword());
-            Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            return JwtUtil.createJwt(customUserDetails.getUser().getUserId(), customUserDetails.getUser().getUserNm());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+    public String login(UserLoginForm userForm) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                = new UsernamePasswordAuthenticationToken(userForm.getUserId(), userForm.getPassword());
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        customUserDetails.getUser().updateLastLoginDt(LocalDateTime.now());
+        log.info("authentication {}", authentication);
+        return JwtUtil.createJwt(customUserDetails.getUser().getUserId(), customUserDetails.getUser().getUserNm());
     }
 
     /**
      * 회원 가입
      */
     @Transactional
-    public String signUp(UserSaveForm userForm) throws Exception {
-        try {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            User users = User.builder()
-                    .userId(userForm.getUserId())
-                    .userNm(userForm.getUserNm())
-                    .password(passwordEncoder.encode(userForm.getPassword()))
-                    .build();
-            return userRepository.save(users).getUserNm();
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+    public String signUp(UserSaveForm userForm) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User users = User.builder()
+                .userId(userForm.getUserId())
+                .userNm(userForm.getUserNm())
+                .password(passwordEncoder.encode(userForm.getPassword()))
+                .build();
+        return userRepository.save(users).getUserNm();
     }
 
     /**

@@ -86,9 +86,6 @@ export default {
                     } else {
                         this.boardFiles = res.data.boardInfo.boardFiles;
                     }
-                }).catch((err) => {
-                    alert(err.response.data.errorCode + " : " + err.response.data.message);
-                    this.$store.state.loadingStatus = false;
                 });
             }
         },
@@ -140,8 +137,7 @@ export default {
                     alert("수정되었습니다.");
                     this.fnGoList();
                 }).catch((err) => {
-                    alert(err.response.data.errorCode + " : " + err.response.data.message);
-                    this.$store.state.loadingStatus = false;
+                    this.$common.commonAxiosError(err);
                 });
             }
         },
@@ -177,8 +173,7 @@ export default {
                     alert("삭제되었습니다.");
                     this.fnGoList();
                 }).catch((err) => {
-                    alert(err.response.data.errorCode + " : " + err.response.data.message);
-                    this.$store.state.loadingStatus = false;
+                    this.$common.commonAxiosError(err);
                 });
             }
         },
@@ -210,8 +205,7 @@ export default {
                             this.boardFiles.splice(rowIdx, 1);
                             alert("삭제되었습니다.");
                         }).catch((err) => {
-                            alert(err.errorCode + " : " + err.message);
-                            this.$store.state.loadingStatus = false;
+                            this.$common.commonAxiosError(err);
                         });
                     } else {
                         this.boardFiles.splice(rowIdx, 1);

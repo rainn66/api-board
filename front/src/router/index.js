@@ -12,6 +12,8 @@ const requireAuth = () => (from, to, next) => {
 	if (token) {
 		store.state.isLogin = true;
 		return next();
+	} else {
+		store.state.isLogin = false;
 	}
 	alert('로그인이 필요합니다.');
 	next('/login');
@@ -21,6 +23,8 @@ const noRequireAuth = () => (from, to, next) => {
 	const token = localStorage.getItem("userToken");
 	if (token) {
 		store.state.isLogin = true;
+	} else {
+		store.state.isLogin = false;
 	}
 	return next();
 };

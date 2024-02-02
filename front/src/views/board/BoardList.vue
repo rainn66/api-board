@@ -112,8 +112,7 @@ export default {
                 this.paging = res.data.boardList.pageable;
                 this.totalPages = res.data.boardList.totalPages;
             }).catch((err) => {
-                alert(err.response.data.errorCode + " : " + err.response.data.message);
-                this.$store.state.loadingStatus = false;
+                this.$common.commonAxiosError(err);
             });
         },
         fnGoForm(boardIdx) {
