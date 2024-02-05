@@ -1,6 +1,7 @@
 package com.board.back.controller;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.board.back.exception.Exception400;
+import com.board.back.exception.Exception401;
 import com.board.back.form.BoardFileForm;
 import com.board.back.form.condition.BoardSearchCondition;
 import com.board.back.form.validation.BoardDeleteForm;
@@ -56,7 +57,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<?> boardList(Pageable pageable,
                                     BoardSearchCondition searchCondition,
-                                    @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) {
+                                    @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) throws Exception {
         Map<String, Object> result = new HashMap<>();
         result.put("boardList", boardService.getBoardList(pageable, searchCondition, boardMainIdx));
         return ResponseEntity.ok(result);
@@ -67,14 +68,9 @@ public class BoardController {
      */
     @GetMapping("/add")
     public ResponseEntity<?> boardAddForm() throws Exception {
-        try {
-            Map<String, Object> result = new HashMap<>();
-            result.put("boardMainList", boardMainRepository.findAll()); //게시판 카테고리 조회
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            //ControllerAdvice 500 error 로 던지도록 설정해둠(임시)
-            throw new RuntimeException(e.getMessage());
-        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("boardMainList", boardMainRepository.findAll()); //게시판 카테고리 조회
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -84,22 +80,17 @@ public class BoardController {
     public ResponseEntity<?> boardAdd(@RequestPart("body") @Valid BoardSaveForm saveForm,
                                                         @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                                         BindingResult bindingResult) throws Exception {
-        try {
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            } else {
-                List<BoardFileForm> fileForm = new ArrayList<>();
-                if (file != null && !file.isEmpty()) {
-                    fileForm = fileUtil.saveFiles(file, String.valueOf(saveForm.getBoardMainIdx()));
-                }
-                boardService.regBoardInfo(saveForm, fileForm);
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
+        } else {
+            List<BoardFileForm> fileForm = new ArrayList<>();
+            if (file != null && !file.isEmpty()) {
+                fileForm = fileUtil.saveFiles(file, String.valueOf(saveForm.getBoardMainIdx()));
             }
-            return ResponseEntity.ok(null);
-        } catch (Exception e) {
-            //ControllerAdvice 500 error 로 던지도록 설정해둠(임시)
-            throw new RuntimeException(e.getMessage());
+            boardService.regBoardInfo(saveForm, fileForm);
         }
+        return ResponseEntity.ok(null);
     }
 
     /**
@@ -130,30 +121,23 @@ public class BoardController {
         //String securityUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         //token 작성자 확인(작성자만 수정 가능하도록)
-        try {
-            String jwt = request.getHeader("Authorization");
-            String tokenUserId = JwtUtil.tokenToUserId(jwt);
-            if (!updateForm.getRegUserId().equals(tokenUserId)) {
-                throw new Exception("글 수정 권한이 없습니다.");
-            }
-
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            } else {
-                List<BoardFileForm> fileForm = new ArrayList<>();
-                if (file != null && !file.isEmpty()) {
-                    fileForm = fileUtil.saveFiles(file, String.valueOf(updateForm.getBoardMainIdx()));
-                }
-                boardService.modBoardInfo(updateForm, fileForm);
-            }
-            return ResponseEntity.ok(null);
-        } catch (TokenExpiredException e) {
-            log.error("TokenExpiredException: {}", e.getMessage());
-            throw new TokenExpiredException(e.getMessage());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
+        if (!updateForm.getRegUserId().equals(tokenUserId)) {
+            throw new Exception401();
         }
+
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
+        } else {
+            List<BoardFileForm> fileForm = new ArrayList<>();
+            if (file != null && !file.isEmpty()) {
+                fileForm = fileUtil.saveFiles(file, String.valueOf(updateForm.getBoardMainIdx()));
+            }
+            boardService.modBoardInfo(updateForm, fileForm);
+        }
+        return ResponseEntity.ok(null);
     }
 
     /**
@@ -163,26 +147,19 @@ public class BoardController {
     public ResponseEntity<?> boardDelete(@RequestBody @Valid BoardDeleteForm deleteForm,
                                                            HttpServletRequest request,
                                                            BindingResult bindingResult) throws Exception {
-        try {
-            //token 작성자 확인(작성자만 삭제 가능하도록)
-            String jwt = request.getHeader("Authorization");
-            String tokenUserId = JwtUtil.tokenToUserId(jwt);
-            if (!deleteForm.getRegUserId().equals(tokenUserId)) {
-                throw new Exception("글 수정 권한이 없습니다.");
-            }
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            } else {
-                boardService.delBoardInfo(deleteForm);
-            }
-            return ResponseEntity.ok(null);
-        } catch (TokenExpiredException e) {
-            log.error("TokenExpiredException: {}", e.getMessage());
-            throw new TokenExpiredException(e.getMessage());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        //token 작성자 확인(작성자만 삭제 가능하도록)
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
+        if (!deleteForm.getRegUserId().equals(tokenUserId)) {
+            throw new Exception401();
         }
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
+        } else {
+            boardService.delBoardInfo(deleteForm);
+        }
+        return ResponseEntity.ok(null);
     }
 
     /**
@@ -192,25 +169,18 @@ public class BoardController {
     public ResponseEntity<?> boardFileDelete(@RequestBody @Valid BoardFileDeleteForm boardFileDeleteForm,
                                                                HttpServletRequest request,
                                                                BindingResult bindingResult) throws Exception {
-        try {
-            //token 작성자 확인(작성자만 삭제 가능하도록)
-            String jwt = request.getHeader("Authorization");
-            String tokenUserId = JwtUtil.tokenToUserId(jwt);
-            if (!boardFileDeleteForm.getRegUserId().equals(tokenUserId)) {
-                throw new Exception("글 수정 권한이 없습니다.");
-            }
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            } else {
-                boardService.delBoardFileInfo(boardFileDeleteForm.getBoardFileIdx());
-            }
-            return ResponseEntity.ok(null);
-        } catch (TokenExpiredException e) {
-            log.error("TokenExpiredException: {}", e.getMessage());
-            throw new TokenExpiredException(e.getMessage());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        //token 작성자 확인(작성자만 삭제 가능하도록)
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
+        if (!boardFileDeleteForm.getRegUserId().equals(tokenUserId)) {
+            throw new Exception401();
         }
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
+        } else {
+            boardService.delBoardFileInfo(boardFileDeleteForm.getBoardFileIdx());
+        }
+        return ResponseEntity.ok(null);
     }
 }

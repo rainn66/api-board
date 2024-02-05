@@ -43,21 +43,22 @@
         </table>
         <div class="pagination w3-bar w3-padding-16 w3-small" v-if="totalPages > 0">
             <span class="pg">
-                <a href="javascript:" @click="fnGetList(1)" class="first w3-button">&lt;&lt;</a>
-                <a href="javascript:" v-if="paging.pageNumber > 0" @click="fnGetList(paging.pageNumber)"
+                <a href="javascript:" @click="fnGetList(0)" class="first w3-button">&lt;&lt;</a>
+                <a href="javascript:" v-if="paging.pageNumber > 0" @click="fnGetList(Number(paging.pageNumber)-1)"
                 class="prev w3-button w3-border">&lt;</a>
-                <template v-for="(n,index) in pageNavigator()">
-                    <template v-if="paging.pageNumber===n">
-                        <strong class="w3-button w3-green" :key="index">{{ n + 1 }}</strong>
+                <template v-for="(n,index) in pageNavigator()" :key="index">
+                    <template v-if="paging.pageNumber+1===n">
+                        <strong class="w3-button w3-green">{{ n }}</strong>
                     </template>
                     <template v-else>
-                        <a class="w3-button " href="javascript:;" @click="fnGetList(Number(n) + 1)" :key="index">{{ n + 1 }}</a>
+                        <a class="w3-button " @click="fnGetList(Number(n)-1)">{{n}}</a>
                     </template>
                 </template>
-                <a href="javascript:" v-if="totalPages-1 > paging.pageNumber" @click="fnGetList(Number(paging.pageNumber)+2)" class="next w3-button w3-border">&gt;</a>
-                <a href="javascript:" @click="fnGetList(totalPages)" class="last w3-button">&gt;&gt;</a>
+                <a href="javascript:" v-if="totalPages-1 > paging.pageNumber" @click="fnGetList(Number(paging.pageNumber)+1)" class="next w3-button w3-border">&gt;</a>
+                <a href="javascript:" @click="fnGetList(Number(totalPages)-1)" class="last w3-button">&gt;&gt;</a>
             </span>
         </div>
+        <!-- pageable 사용시 주의사항 : pageable 객체에 담겨있는 pageNumber 는 0 부터 시작한다 request 시에도 0부터 카운트해서 보내야함 -->
     </div>
 </template>
 
@@ -72,18 +73,19 @@ export default {
             paging: {
                 pageNumber:0,
                 offset:0,
-                pageSize:0,
+                pageSize:10,
             },
             totalPages:0,
             totalElements:0,
+            size:10,
             searchKey: this.$route.query.searchKey ? this.$route.query.searchKey : '',
             searchVal: this.$route.query.searchVal ? this.$route.query.searchVal : '',
             boardMainIdx: this.$route.query.boardMainIdx ? this.$route.query.boardMainIdx : '1', //없으면 error 페이지 이동
             pageNavigator: function () { //페이징 처리
                 let pageNumber = [];
-                let start_page = 0;
-                let end_page = this.totalPages;
-                for (let i = start_page; i < end_page; i++) pageNumber.push(i);
+                let startPage = 1;
+                let endPage = this.totalPages;
+                for (let i = startPage; i < endPage+1; i++) pageNumber.push(i);
                 return pageNumber;
             }
         }

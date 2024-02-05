@@ -18,7 +18,7 @@ public class JwtUtil {
     public static String createJwt(String userId, String userNm){
         Algorithm algorithm = Algorithm.HMAC256(SECRET);
         String jwt = "Bearer " + JWT.create()
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60)) //1분
+                .withExpiresAt(new Date(System.currentTimeMillis() + (1000 * 60 * 10))) //10분
                 //.withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 10)) //10초
                 .withClaim("userId", userId)
                 .withClaim("userNm", userNm)

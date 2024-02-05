@@ -1,5 +1,6 @@
 package com.board.back.controller;
 
+import com.board.back.exception.Exception400;
 import com.board.back.form.validation.UserLoginForm;
 import com.board.back.form.validation.UserSaveForm;
 import com.board.back.service.UserService;
@@ -31,39 +32,28 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserLoginForm userForm,
                                                      BindingResult bindingResult) throws Exception {
-        try {
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            }
-            HttpHeaders responseHeader = new HttpHeaders();
-            String jwt = userService.login(userForm);
-            responseHeader.add("Authorization", jwt);
-            return ResponseEntity.ok().headers(responseHeader).body("Not null");
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
         }
+        HttpHeaders responseHeader = new HttpHeaders();
+        String jwt = userService.login(userForm);
+        responseHeader.add("Authorization", jwt);
+        return ResponseEntity.ok().headers(responseHeader).body("Not null");
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid UserSaveForm userForm,
                                                       BindingResult bindingResult) throws Exception {
 
-        try {
-            Map<String, Object> result = new HashMap<>();
-            if (bindingResult.hasErrors()) {
-                FieldError error = bindingResult.getFieldErrors().get(0);
-                throw new Exception(error.getDefaultMessage());
-            }
-            if (userService.validateDuplicateUsers(userForm.getUserId())) {
-                String userNm = userService.signUp(userForm);
-                result.put("userNm", userNm);
-            } else {
-                throw new Exception("이미 존재하는 회원입니다.");
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            throw new Exception(e);
+        Map<String, Object> result = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
         }
+        String userNm = userService.signUp(userForm);
+        result.put("userNm", userNm);
+
+        return ResponseEntity.ok(result);
     }
 }

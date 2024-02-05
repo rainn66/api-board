@@ -31,7 +31,8 @@
         <div class="board-contents" id="fileContents">
             <div style="margin-bottom:5px;" v-for="(row, idx) in boardFiles" :key="row.boardFileIdx">
                 <input style="display:none;" type="file" name="uploadFile" :id="'upload_' + row.boardFileIdx" @change="fnChangeFileNm(row.boardFileIdx)">
-                <label style="margin-right:10px;cursor:pointer;" :for="'upload_' + row.boardFileIdx">{{row.fileOrgNm}}</label>
+                <label style="margin-right:10px;" class="w3-button w3-round w3-blue" :for="'upload_' + row.boardFileIdx">파일선택</label>
+                <label style="margin-right:10px;cursor:pointer;" :id="'upload_' + row.boardFileIdx + '_label'">{{row.fileOrgNm}}</label>
                 <button style="margin-right:10px;" v-if="idx === 0" type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>
                 <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDeleteFile(row.boardFileIdx, idx);">파일삭제</button>&nbsp;
             </div>
@@ -214,7 +215,7 @@ export default {
             }
         },
         fnChangeFileNm(idx) {
-            document.querySelector('label[for=upload_' + idx + ']').innerText = document.getElementById('upload_' + idx).files[0].name;
+            document.querySelector('label[id=upload_' + idx + '_label]').innerText = document.getElementById('upload_' + idx).files[0].name;
         }
     }
 }

@@ -13,10 +13,5 @@ public interface UserService {
     /**
      * 회원 가입
      */
-    String signUp(UserSaveForm userForm);
-
-    /**
-     * 회원 중복 체크
-     */
-    boolean validateDuplicateUsers(String userId);
+    String signUp(UserSaveForm userForm) throws Exception;
 }

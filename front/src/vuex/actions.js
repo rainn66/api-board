@@ -15,15 +15,12 @@ let setIsAuth = ({commit}, data) => {
 
 // 백엔드에서 반환한 결과값을 가지고 로그인 성공 실패 여부를 vuex에 넣어준다.
 let processResponse = (store, loginResponse) => {
-	switch (loginResponse) {
-		case 'notFound':
-			setErrorState(store, 'Wrong ID or Password');
-			setIsAuth(store, false);
-			break;
-		default:
-			// setUserId(store, loginResponse.data.userId);
-			setErrorState(store, '');
-			setIsAuth(store, true);
+	if (loginResponse) {
+		setErrorState(store, '');
+		setIsAuth(store, true);
+	} else {
+		setErrorState(store, 'Wrong ID or Password');
+		setIsAuth(store, false);
 	}
 }
 

@@ -1,15 +1,18 @@
 import axios from 'axios';
-import store from '@/vuex/store'
+// import common from "./common"
+
 
 axios.interceptors.request.use(function (config) {
-	store.commit('LOADING_STATUS', true);
 	config.headers.Authorization = localStorage.getItem('userToken');
 	return config;
 });
 
 axios.interceptors.response.use(function (config){
-		store.commit('LOADING_STATUS', false);
 		return config
-});
+	}, function (config) {
+		// common.commonAxiosError(config);
+		return Promise.reject(config);
+	}
+);
 
 export default axios;

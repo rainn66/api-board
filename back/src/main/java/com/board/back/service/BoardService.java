@@ -16,30 +16,30 @@ public interface BoardService {
     /**
      * 게시글 목록
      */
-    Page<BoardDto> getBoardList(Pageable pageable, BoardSearchCondition searchCondition, Long boardMainIdx);
+    Page<BoardDto> getBoardList(Pageable pageable, BoardSearchCondition searchCondition, Long boardMainIdx) throws Exception;
 
     /**
      * 게시글 상세
      */
-    BoardDto getBoardInfo(Long boardIdx);
+    BoardDto getBoardInfo(Long boardIdx) throws Exception;
 
     /**
      * 게시글 등록
      */
-    void regBoardInfo(BoardSaveForm saveForm, List<BoardFileForm> fileForm);
+    void regBoardInfo(BoardSaveForm saveForm, List<BoardFileForm> fileForm) throws Exception;
 
     /**
      * 게시글 수정
      */
-    void modBoardInfo(BoardUpdateForm updateForm, List<BoardFileForm> fileForm);
+    void modBoardInfo(BoardUpdateForm updateForm, List<BoardFileForm> fileForm) throws Exception;
 
     /**
      * 게시글 삭제
      */
-    void delBoardInfo(BoardDeleteForm deleteForm);
+    void delBoardInfo(BoardDeleteForm deleteForm) throws Exception;
 
     /**
      * 게시글 업로드 파일 개별 삭제
      */
-    void delBoardFileInfo(Long boardFileIdx);
+    void delBoardFileInfo(Long boardFileIdx) throws Exception;
 }

@@ -15,20 +15,7 @@ const requireAuth = () => (from, to, next) => {
 	} else {
 		store.state.isLogin = false;
 	}
-	alert('로그인이 필요합니다.');
-	next('/login');
 }
-
-const noRequireAuth = () => (from, to, next) => {
-	const token = localStorage.getItem("userToken");
-	if (token) {
-		store.state.isLogin = true;
-	} else {
-		store.state.isLogin = false;
-	}
-	return next();
-};
-
 
 
 const routes = [
@@ -36,37 +23,33 @@ const routes = [
 		path: '/',
 		name: 'AppHome',
 		component: AppHome,
-		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/login',
 		name: 'AppLogin',
 		component: AppLogin,
-		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/about',
 		name: 'AppAbout',
 		component: () => import('../views/AppAbout.vue'),
-		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/board',
 		name: 'BoardList',
 		component: BoardList,
-		beforeEnter: noRequireAuth()
 	},
 	{
 		path: '/boardAdd',
 		name: 'BoardAdd',
 		component: BoardAdd,
-		beforeEnter: requireAuth()
+		afterEnter: requireAuth()
 	},
 	{
 		path: '/boardEdit',
 		name: 'BoardEdit',
 		component: BoardEdit,
-		beforeEnter: requireAuth()
+		afterEnter: requireAuth()
 	},
 	{
 		path: '/signUp',

@@ -34,8 +34,8 @@ public class SecurityConfig {
     }
 
     //세션 필요없음 -> 권한 사용x -> DB 권한 컬럼 필요없음
-    //1. 홈, 목록, 회원가입, 로그인화면을 제외한 요청 시 로그인 여부 필터 구현
-    //2. 수정/삭제 -> 글 작성자만 확인하면됨 -> 이걸 필터로 구현 가능?
+    //1. 홈, 목록, 회원가입, 로그인화면을 제외한 요청 시 로그인 여부(jwt) 필터 구현 -> JwtAuthorizationFilter
+    //2. 수정/삭제 -> 글 작성자만 확인하면됨 -> controller 에서 처리
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -44,15 +44,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*"); // GET, POST, PUT, DELETE (Javascript 요청 허용)
-        configuration.addAllowedOriginPattern("*"); // 모든 IP 주소 허용 (프론트 IP만 허용)
-        configuration.setAllowCredentials(true); // 클라이언트에서 쿠키 요청 허용
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowCredentials(true);
         configuration.addExposedHeader("Authorization");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -11,6 +11,9 @@ module.exports = {
                     "^/api": "",
                 }
             }
+        },
+        client: {
+            overlay: false
         }
     },
     indexPath: '../templates/index.html'
