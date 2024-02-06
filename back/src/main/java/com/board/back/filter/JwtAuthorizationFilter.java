@@ -36,6 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if (myJwt == null) {
             if (!PatternMatchUtils.simpleMatch(notFilteringList, requestURI)) {
+                log.info("로그인이 필요합니다.");
                 setErrorResponse(response, new Exception401("NOT_LOGIN", "로그인이 필요합니다."));
             } else {
                 chain.doFilter(request, response);

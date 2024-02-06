@@ -1,4 +1,4 @@
-import common from "@/util/common";
+// import common from "@/util/common";
 import axios from 'axios'
 
 const getUserInfo = (userId, password) => {
@@ -19,7 +19,6 @@ export default {
 		try {
 			const getUserInfoPromise = getUserInfo(userId, password)
 			const [userInfoResponse] = await Promise.all([getUserInfoPromise])
-
 			// 인증안되면 Exception 처리하기때문에 사용안함
 			// if (userInfoResponse.data.length === 0 ) {
 			// 	return 'notFound'
@@ -31,7 +30,7 @@ export default {
 			localStorage.setItem('userToken', userInfoResponse.headers.getAuthorization());
 			return userInfoResponse
 		} catch (err) {
-			common.commonAxiosError(err);
+			return Promise.reject(err);
 		}
 	}
 }

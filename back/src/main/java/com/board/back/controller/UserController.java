@@ -39,7 +39,7 @@ public class UserController {
         HttpHeaders responseHeader = new HttpHeaders();
         String jwt = userService.login(userForm);
         responseHeader.add("Authorization", jwt);
-        return ResponseEntity.ok().headers(responseHeader).body("Not null");
+        return ResponseEntity.ok().headers(responseHeader).body("Success, Check headers jwt");
     }
 
     @PostMapping("/signup")

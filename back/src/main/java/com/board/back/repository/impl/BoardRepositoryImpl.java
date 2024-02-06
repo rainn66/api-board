@@ -34,6 +34,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         board.boardMain.boardMainIdx,
                         board.boardTitle,
                         board.boardContent,
+                        board.delYn,
                         board.topFixYn,
                         board.regUserId,
                         board.regDt

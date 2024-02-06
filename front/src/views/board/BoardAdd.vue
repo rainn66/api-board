@@ -76,7 +76,8 @@ export default {
                 this.boardMainList = res.data.boardMainList;
                 this.boardFiles = [{boardFileIdx:this.newFileCnt + '_0', fileSaveNm: '', fileOrgNm: '파일을 선택해주세요.'}]
             }).catch((err) => {
-                this.$common.commonAxiosError(err);
+                console.log(err);
+                // this.$common.commonAxiosError(err);
             });
         },
         fnAddForm() {
@@ -111,7 +112,8 @@ export default {
                     alert("저장되었습니다.");
                     this.fnGoList();
                 }).catch((err) => {
-                    this.$common.commonAxiosError(err);
+                    console.log(err);
+                    // this.$common.commonAxiosError(err);
                 });
             }
         },

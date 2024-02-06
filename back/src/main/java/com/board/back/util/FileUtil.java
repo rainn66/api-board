@@ -40,6 +40,9 @@ public class FileUtil {
         return storeFileResult;
     }
 
+    /**
+     * 서브 디렉토리 경로가 필요한 경우
+     */
     public List<BoardFileForm> saveFiles(List<MultipartFile> multipartFiles, String subDir) throws IOException {
         if (multipartFiles == null) {
             return null;

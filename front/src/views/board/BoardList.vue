@@ -114,7 +114,8 @@ export default {
                 this.paging = res.data.boardList.pageable;
                 this.totalPages = res.data.boardList.totalPages;
             }).catch((err) => {
-                this.$common.commonAxiosError(err);
+                console.log(err);
+                // this.$common.commonAxiosError(err);
             });
         },
         fnGoForm(boardIdx) {

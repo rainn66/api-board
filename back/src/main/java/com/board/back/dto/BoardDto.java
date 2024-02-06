@@ -32,12 +32,13 @@ public class BoardDto {
     private List<BoardFile> boardFiles;
 
     @QueryProjection
-    public BoardDto(Long boardIdx, Long boardMainIdx, String boardTitle, String boardContent, String topFixYn, String regUserId, LocalDateTime regDt) {
+    public BoardDto(Long boardIdx, Long boardMainIdx, String boardTitle, String boardContent, String topFixYn, String delYn, String regUserId, LocalDateTime regDt) {
         this.boardIdx = boardIdx;
         this.boardMainIdx = boardMainIdx;
         this.boardTitle = boardTitle;
         this.boardContent = boardContent;
         this.topFixYn = topFixYn;
+        this.delYn = delYn;
         this.regUserId = regUserId;
         this.regDt = regDt;
     }

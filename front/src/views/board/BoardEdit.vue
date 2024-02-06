@@ -32,7 +32,7 @@
             <div style="margin-bottom:5px;" v-for="(row, idx) in boardFiles" :key="row.boardFileIdx">
                 <input style="display:none;" type="file" name="uploadFile" :id="'upload_' + row.boardFileIdx" @change="fnChangeFileNm(row.boardFileIdx)">
                 <label style="margin-right:10px;" class="w3-button w3-round w3-blue" :for="'upload_' + row.boardFileIdx">파일선택</label>
-                <label style="margin-right:10px;cursor:pointer;" :id="'upload_' + row.boardFileIdx + '_label'">{{row.fileOrgNm}}</label>
+                <label style="margin-right:10px;cursor:pointer;" :id="'upload_' + row.boardFileIdx + '_label'" v-on:click="fnFileDownload(row.boardFileIdx)">{{row.fileOrgNm}}</label>
                 <button style="margin-right:10px;" v-if="idx === 0" type="button" class="w3-button w3-round w3-blue" v-on:click="fnAddFile">파일추가</button>
                 <button type="button" class="w3-button w3-round w3-blue-gray" v-on:click="fnDeleteFile(row.boardFileIdx, idx);">파일삭제</button>&nbsp;
             </div>
@@ -134,11 +134,13 @@ export default {
                             'Content-Type': 'multipart/form-data'
                         }
                     }
-                ).then(() => {
+                ).then((res) => {
+                    console.log(res.data);
                     alert("수정되었습니다.");
                     this.fnGoList();
                 }).catch((err) => {
-                    this.$common.commonAxiosError(err);
+                    console.log(err);
+                    // this.$common.commonAxiosError(err);
                 });
             }
         },
@@ -174,7 +176,8 @@ export default {
                     alert("삭제되었습니다.");
                     this.fnGoList();
                 }).catch((err) => {
-                    this.$common.commonAxiosError(err);
+                    console.log(err);
+                    // this.$common.commonAxiosError(err);
                 });
             }
         },
@@ -184,11 +187,11 @@ export default {
         },
         fnDeleteFile(idx, rowIdx) {
             let fileCnt = document.getElementsByName('uploadFile').length
-            if (fileCnt === 1) {
+            let boardFileIdx = String(idx).substring(String(idx).lastIndexOf('_')+1);
+            if (fileCnt === 1 && Number(boardFileIdx) === 0) {
                 alert("더이상 삭제할 수 없습니다.");
             } else {
                 if (confirm("삭제하시겠습니까?")) {
-                    let boardFileIdx = String(idx).substring(String(idx).lastIndexOf('_')+1);
                     if (Number(boardFileIdx) !== 0) {
                         this.form = {
                             "boardFileIdx": boardFileIdx,
@@ -204,9 +207,13 @@ export default {
                             }
                         ).then(() => {
                             this.boardFiles.splice(rowIdx, 1);
+                            if (fileCnt === 1) {
+                                this.fnAddFile();
+                            }
                             alert("삭제되었습니다.");
                         }).catch((err) => {
-                            this.$common.commonAxiosError(err);
+                            console.log(err);
+                            // this.$common.commonAxiosError(err);
                         });
                     } else {
                         this.boardFiles.splice(rowIdx, 1);
@@ -216,6 +223,46 @@ export default {
         },
         fnChangeFileNm(idx) {
             document.querySelector('label[id=upload_' + idx + '_label]').innerText = document.getElementById('upload_' + idx).files[0].name;
+        },
+        fnFileDownload(idx) {
+            let boardFileIdx = String(idx).substring(String(idx).lastIndexOf('_')+1);
+            this.form = {
+                "boardFileIdx": boardFileIdx,
+                "regUserId": this.regUserId
+            }
+            this.$axios.post(
+                this.$serverUrl + '/board/file/download',
+                JSON.stringify(this.form),
+                {
+                    responseType: 'blob',
+                    headers: {'Content-Type': 'application/json'}
+                }
+            ).then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data], {type:response.headers.getContentType()}))
+                const link = document.createElement('a');
+                link.href = url;
+
+                let fileName = 'unknown';
+                const contentDisposition = response.headers.get('content-disposition')
+                if (contentDisposition) {
+                    const fileNameMatch = response.headers.get('content-disposition').split(';').filter(str => str.includes('filename'));
+                    if (fileNameMatch[0]) {
+                        fileName = fileNameMatch[0].split('=')[1];
+                    }
+                }
+
+                fileName = this.fnReplaceAll(decodeURI(fileName), '+', ' ')
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+
+            }).catch((err) => {
+                console.log(err);
+                // this.$common.commonAxiosError(err);
+            });
+        },
+        fnReplaceAll(str, searchStr, replaceStr) {
+            return str.split(searchStr).join(replaceStr);
         }
     }
 }

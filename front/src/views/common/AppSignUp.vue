@@ -60,7 +60,8 @@ export default {
                     name: 'AppLogin',
                 });
             }).catch((err) => {
-                this.$common.commonAxiosError(err);
+                console.log(err);
+                // this.$common.commonAxiosError(err);
             });
         }
     }

@@ -1,13 +1,16 @@
 package com.board.back.controller;
 
+import com.board.back.entity.BoardFile;
 import com.board.back.exception.Exception400;
 import com.board.back.exception.Exception401;
+import com.board.back.exception.Exception404;
 import com.board.back.form.BoardFileForm;
 import com.board.back.form.condition.BoardSearchCondition;
 import com.board.back.form.validation.BoardDeleteForm;
 import com.board.back.form.validation.BoardFileDeleteForm;
 import com.board.back.form.validation.BoardSaveForm;
 import com.board.back.form.validation.BoardUpdateForm;
+import com.board.back.repository.BoardFileRepository;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.service.BoardService;
 import com.board.back.util.FileUtil;
@@ -16,7 +19,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -31,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +55,8 @@ public class BoardController {
 
     private final BoardMainRepository boardMainRepository;
 
+    private final BoardFileRepository boardFileRepository;
+
     private final JwtUtil jwtUtil;
 
     private final FileUtil fileUtil;
@@ -56,8 +66,8 @@ public class BoardController {
      */
     @GetMapping
     public ResponseEntity<?> boardList(Pageable pageable,
-                                    BoardSearchCondition searchCondition,
-                                    @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) throws Exception {
+                                       BoardSearchCondition searchCondition,
+                                       @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) throws Exception {
         Map<String, Object> result = new HashMap<>();
         result.put("boardList", boardService.getBoardList(pageable, searchCondition, boardMainIdx));
         return ResponseEntity.ok(result);
@@ -78,8 +88,8 @@ public class BoardController {
      */
     @PostMapping("/add")
     public ResponseEntity<?> boardAdd(@RequestPart("body") @Valid BoardSaveForm saveForm,
-                                                        @RequestPart(value = "file", required = false) List<MultipartFile> file,
-                                                        BindingResult bindingResult) throws Exception {
+                                      @RequestPart(value = "file", required = false) List<MultipartFile> file,
+                                      BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception400(error.getDefaultMessage());
@@ -114,9 +124,9 @@ public class BoardController {
      */
     @PostMapping("/edit")
     public ResponseEntity<?> boardEdit(@RequestPart(value = "body") @Valid BoardUpdateForm updateForm,
-                                                         @RequestPart(value = "file", required = false) List<MultipartFile> file,
-                                                         HttpServletRequest request,
-                                                         BindingResult bindingResult) throws Exception {
+                                       @RequestPart(value = "file", required = false) List<MultipartFile> file,
+                                       HttpServletRequest request,
+                                       BindingResult bindingResult) throws Exception {
         //Spring security 에 세팅된 회원명으로 비교 시 사용
         //String securityUserId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -145,8 +155,8 @@ public class BoardController {
      */
     @PostMapping("/delete")
     public ResponseEntity<?> boardDelete(@RequestBody @Valid BoardDeleteForm deleteForm,
-                                                           HttpServletRequest request,
-                                                           BindingResult bindingResult) throws Exception {
+                                         HttpServletRequest request,
+                                         BindingResult bindingResult) throws Exception {
         //token 작성자 확인(작성자만 삭제 가능하도록)
         String jwt = request.getHeader("Authorization");
         String tokenUserId = JwtUtil.tokenToUserId(jwt);
@@ -167,8 +177,8 @@ public class BoardController {
      */
     @PostMapping("/file/delete")
     public ResponseEntity<?> boardFileDelete(@RequestBody @Valid BoardFileDeleteForm boardFileDeleteForm,
-                                                               HttpServletRequest request,
-                                                               BindingResult bindingResult) throws Exception {
+                                             HttpServletRequest request,
+                                             BindingResult bindingResult) throws Exception {
         //token 작성자 확인(작성자만 삭제 가능하도록)
         String jwt = request.getHeader("Authorization");
         String tokenUserId = JwtUtil.tokenToUserId(jwt);
@@ -183,4 +193,36 @@ public class BoardController {
         }
         return ResponseEntity.ok(null);
     }
+
+    /**
+     * 게시판 상세 - 파일 다운로드
+     */
+    @PostMapping("/file/download")
+    public ResponseEntity<?> boardFileDownload(@RequestBody @Valid BoardFileDeleteForm boardFileDownForm,
+                                               HttpServletRequest request,
+                                               BindingResult bindingResult) throws Exception {
+        //token 작성자 확인(작성자만 삭제 가능하도록)
+        String jwt = request.getHeader("Authorization");
+        String tokenUserId = JwtUtil.tokenToUserId(jwt);
+        if (!boardFileDownForm.getRegUserId().equals(tokenUserId)) {
+            throw new Exception401();
+        }
+        if (bindingResult.hasErrors()) {
+            FieldError error = bindingResult.getFieldErrors().get(0);
+            throw new Exception400(error.getDefaultMessage());
+        }
+
+        BoardFile findFileInfo = boardFileRepository.findById(boardFileDownForm.getBoardFileIdx()).orElseThrow(Exception404::new);
+
+        UrlResource resource = new UrlResource("file:" + findFileInfo.getFileSavePath() + "/" + findFileInfo.getFileSaveNm());
+
+        String contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        log.info("contentType : {}", contentType);
+        log.info("filePath : {}", findFileInfo.getFileSavePath() + "/" + findFileInfo.getFileSaveNm());
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + URLEncoder.encode(findFileInfo.getFileOrgNm(), StandardCharsets.UTF_8))
+                .body(resource);
+    }
+
 }

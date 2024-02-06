@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import common from "./common"
+import common from "./common"
 
 
 axios.interceptors.request.use(function (config) {
@@ -7,11 +7,12 @@ axios.interceptors.request.use(function (config) {
 	return config;
 });
 
-axios.interceptors.response.use(function (config){
-		return config
-	}, function (config) {
-		// common.commonAxiosError(config);
-		return Promise.reject(config);
+axios.interceptors.response.use(
+	function (config){
+		return config;
+		},
+	function(error) {
+		return common.commonAxiosError(error);
 	}
 );
 

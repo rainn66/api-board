@@ -49,7 +49,7 @@ export default {
                     this.fnGoHome();
                 }
             } catch (err) {
-                alert(err.message);
+                console.log(err.message);
             }
         },
         fnGoHome() {
