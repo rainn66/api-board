@@ -205,6 +205,7 @@ public class BoardController {
         String jwt = request.getHeader("Authorization");
         String tokenUserId = JwtUtil.tokenToUserId(jwt);
         if (!boardFileDownForm.getRegUserId().equals(tokenUserId)) {
+            //responseType : Blob 이기 때문에 정상적으로 alert 출력이 안됨 -> 웹 콘솔에 Unauthorized 출력
             throw new Exception401();
         }
         if (bindingResult.hasErrors()) {

@@ -7,6 +7,7 @@ import com.board.back.repository.BoardRepositoryCustom;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import java.util.List;
 import static com.board.back.entity.QBoard.*;
 import static com.board.back.entity.QBoardMain.*;
 
+@Slf4j
 public class BoardRepositoryImpl implements BoardRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
@@ -34,8 +36,8 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         board.boardMain.boardMainIdx,
                         board.boardTitle,
                         board.boardContent,
-                        board.delYn,
                         board.topFixYn,
+                        board.delYn,
                         board.regUserId,
                         board.regDt
                         )
@@ -51,6 +53,8 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+        log.info("List<BoardDto> result {}", result);
+        //resultTopFix.addAll(result);
 
         Long total = jpaQueryFactory
                 .select(board.count())
@@ -61,7 +65,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         regUserIdEq(condition.getRegUserId()),
                         board.delYn.eq( "N"),
                         boardMain.boardMainIdx.eq(boardMainIdx))
-                .fetchOne();
+                .fetchFirst();
 
         return new PageImpl<>(result, pageable, total);
     }

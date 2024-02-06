@@ -30,13 +30,17 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-if="list.size < 1">
+            <tr v-if="boardList.size < 1">
                 <td>조회된 값이 없습니다.</td>
             </tr>
-            <tr v-for="(row, idx) in list" :key="idx">
+            <tr v-for="(row, idx) in boardList" :key="idx">
                 <td>{{ idx + 1 }}</td>
-                <td><a @click="fnGoForm(row.boardIdx)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.boardTitle }}</a></td>
-                <td>{{ row.regUserId }}</td>
+                <td>
+<!--                    <a target="_blank" href="https://icons8.com/icon/1CT7vXRU5Gug/(46)">(46)</a>작가: <a target="_blank" href="https://icons8.com">Icons8</a>-->
+                    <img style="width:30px;height:30px;margin-right:30px;" v-if="row.topFixYn === 'Y'" src="@/assets/icons8-(46)-64.png"  alt="공지사항"/>
+                    <a @click="fnGoForm(row.boardIdx)" style="cursor:pointer;text-decoration: underline;" class="w3-text-blue w3-pointer">{{ row.boardTitle }}</a>
+                </td>
+                <td>{{row.topFixYn}}{{ row.regUserId }}</td>
                 <td>{{ row.regDt }}</td>
             </tr>
             </tbody>
@@ -68,7 +72,7 @@ export default {
     data() {
         return {
             requestBody: {},
-            list: {boardIdx: '', boardTitle: '', regUserId:'', regDt: ''},
+            boardList: {boardIdx: '', boardTitle: '', regUserId:'', regDt: '', topFixYn: ''},
             no: '',
             paging: {
                 pageNumber:0,
@@ -110,7 +114,7 @@ export default {
                 params: this.requestBody,
                 headers: {}
             }).then((res) => {
-                this.list = res.data.boardList.content;
+                this.boardList = res.data.boardList.content;
                 this.paging = res.data.boardList.pageable;
                 this.totalPages = res.data.boardList.totalPages;
             }).catch((err) => {
