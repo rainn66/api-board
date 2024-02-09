@@ -4,8 +4,8 @@ import com.board.back.config.impl.CustomUserDetails;
 import com.board.back.entity.User;
 import com.board.back.exception.Exception400;
 import com.board.back.exception.Exception401;
-import com.board.back.form.validation.UserLoginForm;
-import com.board.back.form.validation.UserSaveForm;
+import com.board.back.dto.validation.UserLoginDto;
+import com.board.back.dto.validation.UserSaveDto;
 import com.board.back.repository.UserRepository;
 import com.board.back.service.UserService;
 import com.board.back.util.JwtUtil;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
      * 회원 확인
      */
     @Transactional
-    public String login(UserLoginForm userForm) {
+    public String login(UserLoginDto userForm) {
 
         try {
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
      * 회원 가입
      */
     @Transactional
-    public String signUp(UserSaveForm userForm) throws Exception {
+    public String signUp(UserSaveDto userForm) throws Exception {
         Optional<User> findUser = userRepository.findByUserId(userForm.getUserId());
         if (findUser.isPresent()) {
             throw new Exception400("이미 존재하는 회원입니다.");

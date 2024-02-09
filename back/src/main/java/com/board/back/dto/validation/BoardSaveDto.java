@@ -1,4 +1,4 @@
-package com.board.back.form.validation;
+package com.board.back.dto.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardSaveForm {
+public class BoardSaveDto {
 
     @NotNull
     private Long boardMainIdx;

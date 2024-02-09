@@ -1,9 +1,9 @@
-package com.board.back.form.condition;
+package com.board.back.dto.condition;
 
 import lombok.Data;
 
 @Data
-public class BoardSearchCondition {
+public class BoardSearchConditionDto {
 
     private String searchKey;
     private String searchVal;
@@ -12,7 +12,7 @@ public class BoardSearchCondition {
     private String boardTitle;
     private String boardContent;
 
-    public BoardSearchCondition(String searchKey, String searchVal) {
+    public BoardSearchConditionDto(String searchKey, String searchVal) {
         if ("regUserId".equals(searchKey)) {
             this.regUserId = searchVal;
         } else if ("boardTitle".equals(searchKey)) {

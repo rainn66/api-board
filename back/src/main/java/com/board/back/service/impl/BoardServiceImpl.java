@@ -5,11 +5,11 @@ import com.board.back.entity.Board;
 import com.board.back.entity.BoardFile;
 import com.board.back.entity.BoardMain;
 import com.board.back.exception.Exception404;
-import com.board.back.form.BoardFileForm;
-import com.board.back.form.condition.BoardSearchCondition;
-import com.board.back.form.validation.BoardDeleteForm;
-import com.board.back.form.validation.BoardSaveForm;
-import com.board.back.form.validation.BoardUpdateForm;
+import com.board.back.dto.BoardFileDto;
+import com.board.back.dto.condition.BoardSearchConditionDto;
+import com.board.back.dto.validation.BoardDeleteDto;
+import com.board.back.dto.validation.BoardSaveDto;
+import com.board.back.dto.validation.BoardUpdateDto;
 import com.board.back.repository.BoardFileRepository;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.repository.BoardRepository;
@@ -45,7 +45,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시글 목록
      */
-    public Page<BoardDto> getBoardList(Pageable pageable, BoardSearchCondition searchCondition, Long boardMainIdx) throws Exception {
+    public Page<BoardDto> getBoardList(Pageable pageable, BoardSearchConditionDto searchCondition, Long boardMainIdx) throws Exception {
         try {
             return boardRepository.search(searchCondition, pageable, boardMainIdx);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 등록
      */
     @Transactional
-    public void regBoardInfo(BoardSaveForm saveForm, List<BoardFileForm> fileForm) throws Exception {
+    public void regBoardInfo(BoardSaveDto saveForm, List<BoardFileDto> fileForm) throws Exception {
         BoardMain findBoardMain = boardMainRepository.findByBoardMainIdx(saveForm.getBoardMainIdx()).orElseThrow(Exception404::new);
         try {
 
@@ -100,7 +100,7 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 수정
      */
     @Transactional //영속성컨텍스트 트랜잭션 내부에서만 동작(변경감지)
-    public void modBoardInfo(BoardUpdateForm updateForm, List<BoardFileForm> fileFormList) throws Exception {
+    public void modBoardInfo(BoardUpdateDto updateForm, List<BoardFileDto> fileFormList) throws Exception {
 
         Board findBoard = boardRepository.findByBoardIdx(updateForm.getBoardIdx()).orElseThrow(Exception404::new);
 
@@ -112,7 +112,7 @@ public class BoardServiceImpl implements BoardService {
             if (!fileFormList.isEmpty()) {
                 List<Long> boardFileIdxList = updateForm.getBoardFileIdxList();
                 for (int i = 0; i < fileFormList.size(); i++) {
-                    BoardFileForm boardFileForm = fileFormList.get(i);
+                    BoardFileDto boardFileDto = fileFormList.get(i);
                     if (boardFileIdxList.get(i) == 0) {
                         //신규등록은 Idx = 0
                         regBoardFile(findBoard, fileFormList.get(i));
@@ -121,9 +121,9 @@ public class BoardServiceImpl implements BoardService {
                         //기존 파일 삭제 및 정보 업데이트
                         boardFile.ifPresent(bf -> {
                             fileUtil.deleteFile(bf.getFileSavePath(), bf.getFileSaveNm());
-                            bf.update(boardFileForm.getFileOrgNm(),
-                                    boardFileForm.getFileSaveNm(),
-                                    boardFileForm.getFileSavePath());
+                            bf.update(boardFileDto.getFileOrgNm(),
+                                    boardFileDto.getFileSaveNm(),
+                                    boardFileDto.getFileSavePath());
                         });
                     }
                 }
@@ -138,7 +138,7 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 삭제
      */
     @Transactional
-    public void delBoardInfo(BoardDeleteForm deleteForm) throws Exception {
+    public void delBoardInfo(BoardDeleteDto deleteForm) throws Exception {
         try {
             Board findBoard = boardRepository.findByBoardIdx(deleteForm.getBoardIdx()).orElseThrow(Exception404::new);
             findBoard.delete("Y"); //update 동작(변경감지)
@@ -167,7 +167,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시판 업로드 파일 등록 List
      */
-    private void regBoardFileInfo(List<BoardFileForm> fileFormList, Board savedBoard) {
+    private void regBoardFileInfo(List<BoardFileDto> fileFormList, Board savedBoard) {
         fileFormList.forEach(file -> {
             regBoardFile(savedBoard, file);
         });
@@ -176,7 +176,7 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 게시판 업로드 파일 등록
      */
-    private void regBoardFile(Board savedBoard, BoardFileForm fileFrom) {
+    private void regBoardFile(Board savedBoard, BoardFileDto fileFrom) {
         BoardFile boardFile = BoardFile.builder()
                 .board(savedBoard)
                 .fileOrgNm(fileFrom.getFileOrgNm())

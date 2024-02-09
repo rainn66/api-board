@@ -1,19 +1,14 @@
-package com.board.back.form.validation;
+package com.board.back.dto.validation;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
-public class BoardDeleteForm {
-
+public class BoardFileDeleteDto {
     @NotNull
-    private Long boardIdx;
+    private Long boardFileIdx;
 
     @NotEmpty
     private String regUserId;
-
-    private List<Long> boardFileIdxList;
 }

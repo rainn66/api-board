@@ -1,8 +1,8 @@
 package com.board.back.controller;
 
 import com.board.back.exception.Exception400;
-import com.board.back.form.validation.UserLoginForm;
-import com.board.back.form.validation.UserSaveForm;
+import com.board.back.dto.validation.UserLoginDto;
+import com.board.back.dto.validation.UserSaveDto;
 import com.board.back.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid UserLoginForm userForm,
+    public ResponseEntity<?> login(@RequestBody @Valid UserLoginDto userForm,
                                                      BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Valid UserSaveForm userForm,
+    public ResponseEntity<?> signup(@RequestBody @Valid UserSaveDto userForm,
                                                       BindingResult bindingResult) throws Exception {
 
         Map<String, Object> result = new HashMap<>();

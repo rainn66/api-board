@@ -1,4 +1,4 @@
-package com.board.back.form.validation;
+package com.board.back.dto.validation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardUpdateForm {
+public class BoardUpdateDto {
 
     @NotNull
     private Long boardIdx;

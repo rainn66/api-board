@@ -1,6 +1,6 @@
 package com.board.back.util;
 
-import com.board.back.form.BoardFileForm;
+import com.board.back.dto.BoardFileDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,11 +27,11 @@ public class FileUtil {
         return fileDir + subDir + "/" + fileOrgNm;
     }
 
-    public List<BoardFileForm> saveFiles(List<MultipartFile> multipartFiles) throws IOException {
+    public List<BoardFileDto> saveFiles(List<MultipartFile> multipartFiles) throws IOException {
         if (multipartFiles == null) {
             return null;
         }
-        List<BoardFileForm> storeFileResult = new ArrayList<>();
+        List<BoardFileDto> storeFileResult = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
                 storeFileResult.add(saveFile(multipartFile, null));
@@ -43,11 +43,11 @@ public class FileUtil {
     /**
      * 서브 디렉토리 경로가 필요한 경우
      */
-    public List<BoardFileForm> saveFiles(List<MultipartFile> multipartFiles, String subDir) throws IOException {
+    public List<BoardFileDto> saveFiles(List<MultipartFile> multipartFiles, String subDir) throws IOException {
         if (multipartFiles == null) {
             return null;
         }
-        List<BoardFileForm> saveFileResult = new ArrayList<>();
+        List<BoardFileDto> saveFileResult = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
@@ -57,7 +57,7 @@ public class FileUtil {
         return saveFileResult;
     }
 
-    public BoardFileForm saveFile(MultipartFile file, String subDir) throws IOException {
+    public BoardFileDto saveFile(MultipartFile file, String subDir) throws IOException {
 
         String fileOrgNm = file.getOriginalFilename();
         if (fileOrgNm == null) {
@@ -69,7 +69,7 @@ public class FileUtil {
         String fullPath = subDir == null ? getFullPath(fileSaveNm) : getFullPath(fileSaveNm, subDir);
         file.transferTo(new File(fullPath));
 
-        return new BoardFileForm(fileOrgNm, fileSaveNm, fileDir + subDir);
+        return new BoardFileDto(fileOrgNm, fileSaveNm, fileDir + subDir);
     }
 
     public void deleteFile(String fileSavePath, String fileSaveNm){

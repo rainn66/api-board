@@ -2,7 +2,7 @@ package com.board.back.repository.impl;
 
 import com.board.back.dto.BoardDto;
 import com.board.back.dto.QBoardDto;
-import com.board.back.form.condition.BoardSearchCondition;
+import com.board.back.dto.condition.BoardSearchConditionDto;
 import com.board.back.repository.BoardRepositoryCustom;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,7 +28,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public Page<BoardDto> search(BoardSearchCondition condition, Pageable pageable, Long boardMainIdx) {
+    public Page<BoardDto> search(BoardSearchConditionDto condition, Pageable pageable, Long boardMainIdx) {
 
         List<BoardDto> result = jpaQueryFactory
                 .select(new QBoardDto(

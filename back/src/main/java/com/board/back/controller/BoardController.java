@@ -4,12 +4,12 @@ import com.board.back.entity.BoardFile;
 import com.board.back.exception.Exception400;
 import com.board.back.exception.Exception401;
 import com.board.back.exception.Exception404;
-import com.board.back.form.BoardFileForm;
-import com.board.back.form.condition.BoardSearchCondition;
-import com.board.back.form.validation.BoardDeleteForm;
-import com.board.back.form.validation.BoardFileDeleteForm;
-import com.board.back.form.validation.BoardSaveForm;
-import com.board.back.form.validation.BoardUpdateForm;
+import com.board.back.dto.BoardFileDto;
+import com.board.back.dto.condition.BoardSearchConditionDto;
+import com.board.back.dto.validation.BoardDeleteDto;
+import com.board.back.dto.validation.BoardFileDeleteDto;
+import com.board.back.dto.validation.BoardSaveDto;
+import com.board.back.dto.validation.BoardUpdateDto;
 import com.board.back.repository.BoardFileRepository;
 import com.board.back.repository.BoardMainRepository;
 import com.board.back.service.BoardService;
@@ -66,7 +66,7 @@ public class BoardController {
      */
     @GetMapping
     public ResponseEntity<?> boardList(Pageable pageable,
-                                       BoardSearchCondition searchCondition,
+                                       BoardSearchConditionDto searchCondition,
                                        @RequestParam(value = "boardMainIdx", required = true) Long boardMainIdx) throws Exception {
         Map<String, Object> result = new HashMap<>();
         result.put("boardList", boardService.getBoardList(pageable, searchCondition, boardMainIdx));
@@ -87,14 +87,14 @@ public class BoardController {
      * 등록
      */
     @PostMapping("/add")
-    public ResponseEntity<?> boardAdd(@RequestPart("body") @Valid BoardSaveForm saveForm,
+    public ResponseEntity<?> boardAdd(@RequestPart("body") @Valid BoardSaveDto saveForm,
                                       @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                       BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception400(error.getDefaultMessage());
         } else {
-            List<BoardFileForm> fileForm = new ArrayList<>();
+            List<BoardFileDto> fileForm = new ArrayList<>();
             if (file != null && !file.isEmpty()) {
                 fileForm = fileUtil.saveFiles(file, String.valueOf(saveForm.getBoardMainIdx()));
             }
@@ -123,7 +123,7 @@ public class BoardController {
      * 수정
      */
     @PostMapping("/edit")
-    public ResponseEntity<?> boardEdit(@RequestPart(value = "body") @Valid BoardUpdateForm updateForm,
+    public ResponseEntity<?> boardEdit(@RequestPart(value = "body") @Valid BoardUpdateDto updateForm,
                                        @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                        HttpServletRequest request,
                                        BindingResult bindingResult) throws Exception {
@@ -141,7 +141,7 @@ public class BoardController {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception400(error.getDefaultMessage());
         } else {
-            List<BoardFileForm> fileForm = new ArrayList<>();
+            List<BoardFileDto> fileForm = new ArrayList<>();
             if (file != null && !file.isEmpty()) {
                 fileForm = fileUtil.saveFiles(file, String.valueOf(updateForm.getBoardMainIdx()));
             }
@@ -154,7 +154,7 @@ public class BoardController {
      * 삭제
      */
     @PostMapping("/delete")
-    public ResponseEntity<?> boardDelete(@RequestBody @Valid BoardDeleteForm deleteForm,
+    public ResponseEntity<?> boardDelete(@RequestBody @Valid BoardDeleteDto deleteForm,
                                          HttpServletRequest request,
                                          BindingResult bindingResult) throws Exception {
         //token 작성자 확인(작성자만 삭제 가능하도록)
@@ -176,20 +176,20 @@ public class BoardController {
      * 게시판 업로드 파일 개별 삭제
      */
     @PostMapping("/file/delete")
-    public ResponseEntity<?> boardFileDelete(@RequestBody @Valid BoardFileDeleteForm boardFileDeleteForm,
+    public ResponseEntity<?> boardFileDelete(@RequestBody @Valid BoardFileDeleteDto boardFileDeleteDto,
                                              HttpServletRequest request,
                                              BindingResult bindingResult) throws Exception {
         //token 작성자 확인(작성자만 삭제 가능하도록)
         String jwt = request.getHeader("Authorization");
         String tokenUserId = JwtUtil.tokenToUserId(jwt);
-        if (!boardFileDeleteForm.getRegUserId().equals(tokenUserId)) {
+        if (!boardFileDeleteDto.getRegUserId().equals(tokenUserId)) {
             throw new Exception401();
         }
         if (bindingResult.hasErrors()) {
             FieldError error = bindingResult.getFieldErrors().get(0);
             throw new Exception400(error.getDefaultMessage());
         } else {
-            boardService.delBoardFileInfo(boardFileDeleteForm.getBoardFileIdx());
+            boardService.delBoardFileInfo(boardFileDeleteDto.getBoardFileIdx());
         }
         return ResponseEntity.ok(null);
     }
@@ -198,7 +198,7 @@ public class BoardController {
      * 게시판 상세 - 파일 다운로드
      */
     @PostMapping("/file/download")
-    public ResponseEntity<?> boardFileDownload(@RequestBody @Valid BoardFileDeleteForm boardFileDownForm,
+    public ResponseEntity<?> boardFileDownload(@RequestBody @Valid BoardFileDeleteDto boardFileDownForm,
                                                HttpServletRequest request,
                                                BindingResult bindingResult) throws Exception {
         //token 작성자 확인(작성자만 삭제 가능하도록)

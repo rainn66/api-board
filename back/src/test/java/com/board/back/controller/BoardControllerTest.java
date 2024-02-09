@@ -1,6 +1,6 @@
 package com.board.back.controller;
 
-import com.board.back.form.validation.BoardSaveForm;
+import com.board.back.dto.validation.BoardSaveDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -17,12 +17,12 @@ class BoardControllerTest {
     void validationTest(){
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
-        BoardSaveForm saveForm = new BoardSaveForm(1L,
+        BoardSaveDto saveForm = new BoardSaveDto(1L,
                 "50글자테스트중입니다50글자테스트중입니다50글자테스트중입니다50글자테스트중입니다50글자테스트중입니다50글자테스트중입니다",
                 "",
                 "N");
-        Set<ConstraintViolation<BoardSaveForm>> violations = validator.validate(saveForm);
-        for (ConstraintViolation<BoardSaveForm> violation : violations) {
+        Set<ConstraintViolation<BoardSaveDto>> violations = validator.validate(saveForm);
+        for (ConstraintViolation<BoardSaveDto> violation : violations) {
             System.out.println("violation = " + violation);
         }
 

@@ -1,17 +1,17 @@
 package com.board.back.service;
 
-import com.board.back.form.validation.UserLoginForm;
-import com.board.back.form.validation.UserSaveForm;
+import com.board.back.dto.validation.UserLoginDto;
+import com.board.back.dto.validation.UserSaveDto;
 
 public interface UserService {
 
     /**
      * 회원 확인, UserDetail 세팅
      */
-    String login(UserLoginForm userForm);
+    String login(UserLoginDto userForm);
 
     /**
      * 회원 가입
      */
-    String signUp(UserSaveForm userForm) throws Exception;
+    String signUp(UserSaveDto userForm) throws Exception;
 }

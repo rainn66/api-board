@@ -1,11 +1,11 @@
-package com.board.back.form;
+package com.board.back.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BoardFileForm {
+public class BoardFileDto {
 
     private String fileOrgNm;
 
@@ -13,7 +13,7 @@ public class BoardFileForm {
 
     private String fileSavePath;
 
-    public BoardFileForm(String fileOrgNm, String fileSaveNm, String fileSavePath) {
+    public BoardFileDto(String fileOrgNm, String fileSaveNm, String fileSavePath) {
         this.fileOrgNm = fileOrgNm;
         this.fileSaveNm = fileSaveNm;
         this.fileSavePath = fileSavePath;
